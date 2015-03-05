@@ -3,11 +3,11 @@
 /**
  * The dashboard-specific functionality of the plugin.
  *
- * @link       http://example.com
+ * @link       http://xamoom.com
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/admin
+ * @package    xamoom
+ * @subpackage xamoom/admin
  */
 
 /**
@@ -16,11 +16,11 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the dashboard-specific stylesheet and JavaScript.
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/admin
- * @author     Your Name <email@example.com>
+ * @package    xamoom
+ * @subpackage xamoom/admin
+ * @author     Bruno Hautzenberger <bruno@xamoom.com>
  */
-class Plugin_Name_Admin {
+class xamoom_Admin {
 
 	/**
 	 * The ID of this plugin.
@@ -60,7 +60,7 @@ class Plugin_Name_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/plugin-name-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/xamoom-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -70,7 +70,7 @@ class Plugin_Name_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/plugin-name-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/xamoom-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 	

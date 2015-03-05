@@ -3,11 +3,11 @@
 /**
  * Fired during plugin activation
  *
- * @link       http://example.com
+ * @link       http://xamoom.com
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    xamoom
+ * @subpackage xamoom/includes
  */
 
 /**
@@ -16,11 +16,11 @@
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.0
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
- * @author     Your Name <email@example.com>
+ * @package    xamoom
+ * @subpackage xamoom/includes
+ * @author     Bruno Hautzenberger <bruno@xamoom.com>
  */
-class Plugin_Name_Activator {
+class xamoom_Activator {
 
 	/**
 	 * Short Description. (use period)

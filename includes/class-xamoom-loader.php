@@ -3,11 +3,11 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       http://example.com
+ * @link       http://xamoom.com
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    xamoom
+ * @subpackage xamoom/includes
  */
 
 /**
@@ -17,11 +17,11 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
- * @author     Your Name <email@example.com>
+ * @package    xamoom
+ * @subpackage xamoom/includes
+ * @author     Bruno Hautzenberger <bruno@xamoom.com>
  */
-class Plugin_Name_Loader {
+class xamoom_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.
