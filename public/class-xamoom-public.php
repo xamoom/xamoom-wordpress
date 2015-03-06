@@ -61,6 +61,7 @@ class xamoom_Public {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/xamoom-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOME", "//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css", array(), $this->version, 'all' );
 	}
 
 	/**
