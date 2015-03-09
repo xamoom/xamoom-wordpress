@@ -25,24 +25,24 @@ function xamoom_includePageShortCode( $atts ) {
 		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_text'>" . $block['text'] . "</p>"; }
 		break;
 	    case "1": //AUDIO
-		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 		if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_text'>" . $block['artists'] . "</p>"; }
 		if(array_key_exists("file_id",$block)){
-		    $html .=  "<audio controls><source src='" . $block['file_id'] . "'>Your browser does not support the audio element.</audio>";
+		    $html .=  "<audio class='xamoom_audio' controls><source src='" . $block['file_id'] . "'>Your browser does not support the audio element.</audio>";
 		}
 		break;
 	    case "2": //YOUTUBE
 		parse_str( parse_url( $block['youtube_url'], PHP_URL_QUERY ), $query_vars );
 		$youtube_id = $query_vars['v'];
 		
-		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 		$html .= "<div class='xamoom-videoWrapper'>" .
 			    "<iframe width='560' height='349' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
 			"</div>";
 		
 		break;
 	    case "3": //IMAGE
-		if(array_key_exists("title",$block)){ $html .=  "<h2>" . $block['title'] . "</h2>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h3>" . $block['title'] . "</h3>"; }
 		if(array_key_exists("file_id",$block)){ $html .=  "<img class='xamoom_image' src='" . $block['file_id'] . "' />"; }
 		break;
 	    case "4": //LINK
@@ -53,24 +53,67 @@ function xamoom_includePageShortCode( $atts ) {
 		if(array_key_exists("link_url",$block)){ $link_url = $block['link_url']; }
 		if(array_key_exists("link_type",$block)){ $link_type = $block['link_type']; }
 		
+		$icon = "fa-globe";
+		switch ($link_type) {
+		    case "0": //FACEBOOK
+			$icon = "fa-facebook-square";
+			break;
+		    case "1": //TWITTER
+			$icon = "fa-twitter-square";
+			break;
+		    case "2": //WEB
+			$icon = "fa-globe";
+			break;
+		    case "3": //AMAZON
+			$icon = "fa-shopping-cart";
+			break;
+		    case "4": //WIKIPEDIA
+			$icon = "fa-globe";
+			break;
+		    case "5": //LINKEDIN
+			$icon = "fa-linkedin";
+			break;
+		    case "6": //FLICKR
+			$icon = "fa-flickr";
+			break;
+		    case "7": //SOUNDCLOUD
+			$icon = "fa-soundcloud";
+			break;
+		    case "8": //ITUNES
+			$icon = "fa-music";
+			break;
+		    case "9": //YOUTUBE
+			$icon = "fa-youtube-play";
+			break;
+		    case "10": //GOOGLE+
+			$icon = "fa-google-plus";
+			break;
+		    case "11": //TEL
+			$icon = "fa-phone";
+			break;
+		    case "12": //EMAIL
+			$icon = "fa-envelope-o";
+			break;
+		}
+		
 		//TODO LOAD CORRECT ICON ACCORDING TO LINK TYPE
-		$html .= "<p><i class='fa fa-globe'></i> <a href='" . $link_url . "' target='_blank'>" . $link_title . "</a></p>";
+		$html .= "<p class='xamoom_text'><i class='fa " . $icon . "'></i> <a href='" . $link_url . "' target='_blank'>" . $link_title . "</a></p>";
 		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_text'>" . $block['text'] . "</p>"; }
 		break;
 	    case "5": //EBOOK
 		$ebook_url = "";
 		if(array_key_exists("file_id",$block)){ $ebook_url = $block['file_id']; }
 		
-		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 		if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_text'>" . $block['artists'] . "</p>"; }
 		
-		$html .= "<p><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
+		$html .= "<p class='xamoom_text'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
 		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_text'>" . $block['text'] . "</p>"; }
 		break;
 	    case "6": //CONTENT BLOCK CONTENT GET'S IGNORED
 		break;
 	    case "7": //SOUNDCLOUD
-		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 		$html .= "<iframe width='100%' height='150' scrolling='no' frameborder='no' " .
 			    "src='https://w.soundcloud.com/player/?url=" . $block['soundcloud_url'] . "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true'>" .
 			    "</iframe>";
@@ -79,8 +122,6 @@ function xamoom_includePageShortCode( $atts ) {
 	    default:
 		$html .= "<p style='color:#ff00ff;'>" . http_build_query($block) . "</p>";
 	}
-	
-	$html .= "<hr />";
     }
     
     return $html;

@@ -4,6 +4,27 @@
  */
 
 /*
+ * Text formats
+ */
+
+.xamoom_text {
+    margin-bottom: 0px;
+}
+
+.xamoom_audio {
+    width:100%;
+}
+
+h3.xamoom_headline {
+    margin-bottom: 2px;
+}
+
+.xamoom_image {
+    width:100%;
+    height:auto;
+}
+
+/*
  * YOUTUBE VIDEO WRAPPER
  */
 .xamoom-videoWrapper {
