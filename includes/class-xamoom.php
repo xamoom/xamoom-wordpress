@@ -69,7 +69,7 @@ class xamoom {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
+		$this->define_register_settings();
 	}
 
 	/**
@@ -117,12 +117,9 @@ class xamoom {
 	 * @access   private
 	 */
 	private function set_locale() {
-
 		$plugin_i18n = new xamoom_i18n();
 		$plugin_i18n->set_domain( $this->get_plugin_name() );
-
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -133,12 +130,11 @@ class xamoom {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-
 		$plugin_admin = new xamoom_Admin( $this->get_plugin_name(), $this->get_version() );
-
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'addMenu' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publishAPIKeyToJavaScript' );
 	}
 
 	/**
@@ -149,14 +145,34 @@ class xamoom {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-
 		$plugin_public = new xamoom_Public( $this->get_plugin_name(), $this->get_version() );
-
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		
-
 	}
+	
+	/**
+	 * Define settings registration
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_register_settings(){
+		$this->loader->add_action( 'admin_init', $this, 'register_settings' );
+	}
+	
+	/**
+	 * Register all settings
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	public function register_settings(){
+		register_setting( 'xamoom-settings-group', 'xamoom_api_key' );
+		register_setting( 'xamoom-settings-group', 'xamoom_custom_css' );
+	}
+	
+	
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

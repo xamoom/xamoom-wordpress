@@ -72,7 +72,6 @@ require plugin_dir_path( __FILE__ ) .  'tiny-mce-plugin/xamoom-tiny-mce.php';
  * @since    1.0.0
  */
 function run_xamoom() {
-
 	$plugin = new xamoom();
 	$plugin->run();
 

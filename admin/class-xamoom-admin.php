@@ -75,48 +75,41 @@ class xamoom_Admin {
 	}
 	
 	public function addMenu() {
-		add_menu_page( "xamoom page", "xamoom menu", "manage_options", "xamoom-admin", array($this,'showAdmin'), null, 6 );
+		//add_menu_page( "xamoom page", , "manage_options", "xamoom-admin", array($this,'showAdmin'), null, 6 );
+		add_options_page( "xamoom", "xamoom", "manage_options", "xamoom-settings", array($this,'showAdmin'));
+	}
+	
+	public function publishAPIKeyToJavaScript() {
+		print "<script type='text/javascript'>var xamoom_api_key = '" . get_option('xamoom_api_key') . "';</script>";
 	}
 	
 	public function showAdmin(){
 		?>
 		<div class="wrap">
 			<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
-			
-			<table class="widefat fixed comments">
-				<thead>
-					<tr>
-						<th scope="col" id="cb" class="manage-column column-cb check-column" style="">
-							<label class="screen-reader-text" for="cb-select-all-1">Alle auswählen</label>
-							<input id="cb-select-all-1" type="checkbox">
-						</th>
-						<th scope="col" id="author" class="manage-column column-author sortable desc" style="">
-							<a href="http://vienna.pingeb.org/wp-admin/edit-comments.php?orderby=comment_author&amp;order=asc">
-								<span>Autor</span><span class="sorting-indicator"></span>
-							</a>
-						</th>
-						<th scope="col" id="comment" class="manage-column column-comment" style="">
-							Kommentar
-						</th>
-						<th scope="col" id="response" class="manage-column column-response sortable desc" style="">
-							<a href="http://vienna.pingeb.org/wp-admin/edit-comments.php?orderby=comment_post_ID&amp;order=asc">
-								<span>Als Antwort auf</span><span class="sorting-indicator"></span>
-							</a>
-						</th>
-					</tr>
-				</thead>
-			
-				<tfoot>
-				<tr>
-					<th scope="col" class="manage-column column-cb check-column" style=""><label class="screen-reader-text" for="cb-select-all-2">Alle auswählen</label><input id="cb-select-all-2" type="checkbox"></th><th scope="col" class="manage-column column-author sortable desc" style=""><a href="http://vienna.pingeb.org/wp-admin/edit-comments.php?orderby=comment_author&amp;order=asc"><span>Autor</span><span class="sorting-indicator"></span></a></th><th scope="col" class="manage-column column-comment" style="">Kommentar</th><th scope="col" class="manage-column column-response sortable desc" style=""><a href="http://vienna.pingeb.org/wp-admin/edit-comments.php?orderby=comment_post_ID&amp;order=asc"><span>Als Antwort auf</span><span class="sorting-indicator"></span></a></th>	</tr>
-				</tfoot>
-			
-				<tbody id="the-comment-list" data-wp-lists="list:comment">
-					<tr class="no-items"><td class="colspanchange" colspan="4">Es wurden keine Kommentare gefunden.</td></tr>	</tbody>
-			
-				<tbody id="the-extra-comment-list" data-wp-lists="list:comment" style="display: none;">
-				</tbody>
-			</table>
+			<form method="post" action="options.php">
+				<?php settings_fields( 'xamoom-settings-group' ); ?>
+				
+				<table class="form-table">
+					<tbody>
+						<tr>
+							<th scope="row"><label for="xamoom_api_key">API Key</label></th>
+							<td>
+								<input name="xamoom_api_key" type="text" id="xamoom_api_key" value="<?php echo get_option('xamoom_api_key'); ?>" class="regular-text code">
+								<p class="description">This API key is bound to your xamoom System. If you do not have a xamoom system you can order one on <a href="http://xamoom.com">xamoom.com</a>. If you have forgotten your API key please contact <a href="mailto:support@xamoom.com">support@xamoom.com</a>.</p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="xamoom_custom_css">Custom-CSS</label></th>
+							<td>
+								<textarea name="xamoom_custom_css" id="xamoom_custom_css" class="large-text code" rows="4"><?php echo get_option('xamoom_custom_css'); ?></textarea>
+								<p class="description">The following CSS classes are used by xamoom to display and format the content: .xamoom_link, .xamoom_smalltext, .xamoom_audio, .xamoom_headline, .xamoom_image, .xamoom-videoWrapper and .xamoom-videoWrapper iframe.<br/> Feel free to add your custom styling here.</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<?php submit_button(); ?>
+			</form>
 		</div>
 		<?php
 	}

@@ -4,10 +4,24 @@
  */
 
 /*
+ * Block wrapper
+ */
+
+.xamoom_block {
+    width:100%;
+    margin-bottom: 10px;
+}
+
+/*
  * Text formats
  */
 
-.xamoom_text {
+.xamoom_smalltext {
+    margin-bottom: 0px;
+    font-style: italic;
+}
+
+.xamoom_link {
     margin-bottom: 0px;
 }
 

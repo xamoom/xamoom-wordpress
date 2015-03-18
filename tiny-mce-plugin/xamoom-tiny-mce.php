@@ -13,20 +13,25 @@ function xamoom_includePageShortCode( $atts ) {
     
     $content = json_decode($response, true);
     
-    $html = "";
+    //add custom css
+    $html = "<style type='text/css'>" . get_option('xamoom_custom_css') . "</style>";
+    
+    
     for($i = 0; $i < count($content['content_blocks']); $i++){
 	//TODO throw this into a seperate function
 	$block = $content['content_blocks'][$i];
 	$block_type = $block['content_block_type'];
 	
+	$html .= "<div class='xamoom_block'>";
+	
 	switch ($block_type) {
 	    case "0": //TEXT
 		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
-		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_text'>" . $block['text'] . "</p>"; }
+		if(array_key_exists("text",$block)){ $html .=  "<p>" . $block['text'] . "</p>"; }
 		break;
 	    case "1": //AUDIO
-		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
-		if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_text'>" . $block['artists'] . "</p>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+		if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
 		if(array_key_exists("file_id",$block)){
 		    $html .=  "<audio class='xamoom_audio' controls><source src='" . $block['file_id'] . "'>Your browser does not support the audio element.</audio>";
 		}
@@ -35,14 +40,14 @@ function xamoom_includePageShortCode( $atts ) {
 		parse_str( parse_url( $block['youtube_url'], PHP_URL_QUERY ), $query_vars );
 		$youtube_id = $query_vars['v'];
 		
-		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 		$html .= "<div class='xamoom-videoWrapper'>" .
 			    "<iframe width='560' height='349' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
 			"</div>";
 		
 		break;
 	    case "3": //IMAGE
-		if(array_key_exists("title",$block)){ $html .=  "<h3>" . $block['title'] . "</h3>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 		if(array_key_exists("file_id",$block)){ $html .=  "<img class='xamoom_image' src='" . $block['file_id'] . "' />"; }
 		break;
 	    case "4": //LINK
@@ -96,32 +101,54 @@ function xamoom_includePageShortCode( $atts ) {
 			break;
 		}
 		
-		//TODO LOAD CORRECT ICON ACCORDING TO LINK TYPE
-		$html .= "<p class='xamoom_text'><i class='fa " . $icon . "'></i> <a href='" . $link_url . "' target='_blank'>" . $link_title . "</a></p>";
-		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_text'>" . $block['text'] . "</p>"; }
+		$html .= "<p class='xamoom_link'><i class='fa " . $icon . "'></i> <a href='" . $link_url . "' target='_blank'>" . $link_title . "</a></p>";
+		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
 		break;
 	    case "5": //EBOOK
 		$ebook_url = "";
 		if(array_key_exists("file_id",$block)){ $ebook_url = $block['file_id']; }
 		
-		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
-		if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_text'>" . $block['artists'] . "</p>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h3>"; }
+		if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
 		
-		$html .= "<p class='xamoom_text'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
-		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_text'>" . $block['text'] . "</p>"; }
+		$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
+		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
 		break;
 	    case "6": //CONTENT BLOCK CONTENT GET'S IGNORED
 		break;
 	    case "7": //SOUNDCLOUD
-		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 		$html .= "<iframe width='100%' height='150' scrolling='no' frameborder='no' " .
 			    "src='https://w.soundcloud.com/player/?url=" . $block['soundcloud_url'] . "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true'>" .
 			    "</iframe>";
 		
 		break;
+	    case "8": //DOWNLOAD
+		$download_title = "";
+		$download_url = "";
+		$download_type = "0";
+		if(array_key_exists("title",$block)){ $download_title = $block['title']; }
+		if(array_key_exists("file_id",$block)){ $download_url = $block['file_id']; }
+		if(array_key_exists("download_type",$block)){ $download_type = $block['download_type']; }
+		
+		$icon = "fa-user-plus";
+		switch ($download_type) {
+		    case "0": //VCF
+			$icon = "fa-user-plus";
+			break;
+		    case "1": //ICAL
+			$icon = "fa-calendar";
+			break;
+		}
+		
+		$html .= "<p class='xamoom_link'><i class='fa " . $icon . "'></i> <a href='" . $download_url . "'>" . $download_title . "</a></p>";
+		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
+		break;
 	    default:
 		$html .= "<p style='color:#ff00ff;'>" . http_build_query($block) . "</p>";
 	}
+	
+	$html .= "</div>";
     }
     
     return $html;
@@ -142,7 +169,8 @@ function CallAPI($method, $url, $data = false)
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array(                                                                          
 		    'Content-Type: application/json',                                                                                
-		    'Content-Length: ' . strlen($data_string))                                                                       
+		    'Content-Length: ' . strlen($data_string),
+		    'Authorization: ' . get_option('xamoom_api_key'))                                                                       
 		);   
 
             break;

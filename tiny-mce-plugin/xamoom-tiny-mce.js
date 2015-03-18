@@ -3,7 +3,7 @@ var xamoom_search_last_search_params = null;
 
 function xamoomSearchPages(){
     var query = jQuery('#xamoom-page-search-input').val();
-    var params = { page_size: "10", ft_query: query };
+    var params = { page_size: "10", ft_query: query};
     
     xamoomLoadPages(params,false,null);
 }
@@ -19,7 +19,7 @@ function xamoomInsertShortCode(content_id){
     //get content to update title and excerpt
     jQuery.ajax({
         contentType: 'application/json',
-        data: JSON.stringify({content_id:content_id,language:selected_lang}),
+        data: JSON.stringify({content_id:content_id,language:selected_lang,api_key:xamoom_api_key}),
         dataType: 'json',
         success: function(data){
                 jQuery('#title').val(data.title);
@@ -27,9 +27,8 @@ function xamoomInsertShortCode(content_id){
                 jQuery('#title').focus();
             },
         error: function(){
-            alert("Something went wrong...");
+            alert("Something went wrong. Please check you API Key on Settings->xamoom.");
         },
-        processData: false,
         type: 'POST',
         url: 'https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/get_content_by_content_id'
     });
@@ -45,6 +44,8 @@ function xamoomLoadPages(params,append,cursor){
     if (cursor != null) {
         params['cursor'] = cursor;
     }
+    
+    params['api_key'] = xamoom_api_key;
     
     jQuery.ajax({
         contentType: 'application/json',
