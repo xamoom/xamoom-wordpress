@@ -24,6 +24,8 @@ function xamoom_includePageShortCode( $atts ) {
 	
 	$html .= "<div class='xamoom_block'>";
 	
+	$map_id = 1; //used to give seperate ids to seperate spotmaps
+	
 	switch ($block_type) {
 	    case "0": //TEXT
 		if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
@@ -144,6 +146,50 @@ function xamoom_includePageShortCode( $atts ) {
 		$html .= "<p class='xamoom_link'><i class='fa " . $icon . "'></i> <a href='" . $download_url . "'>" . $download_title . "</a></p>";
 		if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
 		break;
+	    case "9": //SPOTMAP
+		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+		$this_map_id = "xamoom-map-" . $map_id;
+		
+		//get spot map
+		$spot_map_response = CallAPI("GET",
+		"https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/spotmap/" . get_option('xamoom_api_key') . "/" . $block['spot_map_tag'] . "/" . $lang);
+		$spot_map = json_decode($spot_map_response, true);
+		
+		//render map
+		$html .= "<div style='height:350px;' id='" . $this_map_id . "'></div>";
+		
+		$html .= "<script language='JavaScript'>
+			    var map = L.map('" . $this_map_id . "').setView([0,0], 13);
+			    
+			    // add OpenStreetMap tile layer
+			    L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href=http://osm.org/copyright>OpenStreetMap</a> contributors'
+			    }).addTo(map);";
+		
+		//render markers
+		$html .= "var bounds = [];";
+		
+		for($j = 0; $j < count($spot_map['items']); $j++){
+		    $marker = $spot_map['items'][$j];
+		    
+		    //extract image
+		    $image = "";
+		    if(array_key_exists("image",$marker)){ $image =  "<img style='width:100%;' src='" . $marker['image'] . "' /><br />"; }
+		    
+		    // add a markers
+		    $html .= "L.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "]).addTo(map).bindPopup(\"<b>" . $marker['display_name'] . "</b><br>" . $image . $marker['description'] . "\");";    
+		    $html .= "bounds.push([" . $marker['location']['lat'] . "," . $marker['location']['lon'] . "]);";
+		}
+		
+		//fit bound
+		$html .= "map.fitBounds(bounds);";
+		$html .= "map.zoomOut();";
+		
+		$html .= "</script>";
+			  
+		
+		$map_id++; //increment map_id
+		break;
 	    default:
 		$html .= "<p style='color:#ff00ff;'>" . http_build_query($block) . "</p>";
 	}
@@ -173,6 +219,9 @@ function CallAPI($method, $url, $data = false)
 		    'Authorization: ' . get_option('xamoom_api_key'))                                                                       
 		);   
 
+            break;
+	case "GET":
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
             break;
         default:
             if ($data)
