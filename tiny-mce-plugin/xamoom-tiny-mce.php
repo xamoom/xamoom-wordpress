@@ -13,6 +13,10 @@ function xamoom_includePageShortCode( $atts ) {
     
     $content = json_decode($response, true);
     
+    //extract custom marker if there is one
+    $custom_map_marker = false;
+    if(array_key_exists("custom_marker",$content['system_style'])){ $custom_map_marker = base64_decode($content['system_style']['custom_marker']); }
+    
     //add custom css
     $html = "<style type='text/css'>" . get_option('xamoom_custom_css') . "</style>";
     
@@ -148,7 +152,7 @@ function xamoom_includePageShortCode( $atts ) {
 		break;
 	    case "9": //SPOTMAP
 		if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
-		$this_map_id = "xamoom-map-" . $map_id;
+		$this_map_id = "xamoom-map-" . $id . "-" . $map_id;
 		
 		//get spot map
 		$spot_map_response = CallAPI("GET",
@@ -159,16 +163,21 @@ function xamoom_includePageShortCode( $atts ) {
 		$html .= "<div style='height:350px;' id='" . $this_map_id . "'></div>";
 		
 		$html .= "<script language='JavaScript'>
-			    var map = L.map('" . $this_map_id . "').setView([0,0], 13);
-			    
-			    // add OpenStreetMap tile layer
-			    L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
-				attribution: '&copy; <a href=http://osm.org/copyright>OpenStreetMap</a> contributors'
-			    }).addTo(map);";
+			    function renderMap_" . $map_id . "(width,height){
+				var map = L.map('" . $this_map_id . "').setView([0,0], 13);
+				
+				// add OpenStreetMap tile layer
+				L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+				    attribution: '&copy; <a href=http://osm.org/copyright>OpenStreetMap</a> contributors'
+				}).addTo(map);
+				
+				var bounds = [];";
 		
-		//render markers
-		$html .= "var bounds = [];";
-		
+		if($custom_map_marker){
+		    $html .= "\nvar LeafIcon = L.Icon.extend({options: {iconSize:[width, height],iconAnchor:[height / 2, height - 1],popupAnchor:  [0, -height]}}); ";
+		    $html .= "\nvar custom_marker = new LeafIcon({iconUrl: '" . $custom_map_marker ."'});";
+		}
+				
 		for($j = 0; $j < count($spot_map['items']); $j++){
 		    $marker = $spot_map['items'][$j];
 		    
@@ -177,13 +186,32 @@ function xamoom_includePageShortCode( $atts ) {
 		    if(array_key_exists("image",$marker)){ $image =  "<img style='width:100%;' src='" . $marker['image'] . "' /><br />"; }
 		    
 		    // add a markers
-		    $html .= "L.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "]).addTo(map).bindPopup(\"<b>" . $marker['display_name'] . "</b><br>" . $image . $marker['description'] . "\");";    
-		    $html .= "bounds.push([" . $marker['location']['lat'] . "," . $marker['location']['lon'] . "]);";
+		    if($custom_map_marker){
+			$html .= "\nL.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "],{icon: custom_marker}).addTo(map).bindPopup(\"<b>" . $marker['display_name'] . "</b><br>" . $image . $marker['description'] . "\");";
+		    } else {
+			$html .= "\nL.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "]).addTo(map).bindPopup(\"<b>" . $marker['display_name'] . "</b><br>" . $image . $marker['description'] . "\");";    
+		    }
+		    
+		    $html .= "\nbounds.push([" . $marker['location']['lat'] . "," . $marker['location']['lon'] . "]);";
 		}
 		
-		//fit bound
-		$html .= "map.fitBounds(bounds);";
-		$html .= "map.zoomOut();";
+		$html .= "
+			map.fitBounds(bounds);
+			map.zoomOut();
+		    }";
+		
+		
+		
+		//build custom marker
+		if($custom_map_marker){
+		    $html .= "var img = new Image();
+				img.onload = function() {
+				    renderMap_" . $map_id . "(this.width,this.height);
+				}
+				img.src = '" . $custom_map_marker . "';";
+		} else { //render without custom makrer
+		    $html .= "renderMap_" . $map_id . "(null);";
+		}
 		
 		$html .= "</script>";
 			  
