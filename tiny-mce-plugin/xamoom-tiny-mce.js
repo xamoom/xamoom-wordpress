@@ -30,7 +30,7 @@ function xamoomInsertShortCode(content_id){
             alert("Something went wrong. Please check you API Key on Settings->xamoom.");
         },
         type: 'POST',
-        url: 'https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/get_content_by_content_id'
+        url: 'https://xamoom-api-dot-xamoom-cloud.appspot.com/_ah/api/xamoomIntegrationApi/v1/get_content_by_content_id'
     });
 }
 
@@ -97,7 +97,7 @@ function xamoomLoadPages(params,append,cursor){
         },
         processData: false,
         type: 'POST',
-        url: 'https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/content_query'
+        url: 'https://xamoom-api-dot-xamoom-cloud.appspot.com/_ah/api/xamoomIntegrationApi/v1/content_query'
     });
 }
 
@@ -122,7 +122,7 @@ function xamoomLoadPages(params,append,cursor){
 		var width = jQuery(window).width(), H = jQuery(window).height(), W = ( 720 < width ) ? 720 : width;
                 W = W - 80;
                 H = H - 84;
-                tb_show( 'xamooom Shortcode Generator', '#TB_inline?width=' + W + '&height=' + H + '&inlineId=xamoom-content-shortcode-form' );
+                tb_show( 'xamoom Shortcode Generator', '#TB_inline?width=' + W + '&height=' + H + '&inlineId=xamoom-content-shortcode-form' );
                 jQuery('#TB_ajaxContent').width(750);
             });
         },

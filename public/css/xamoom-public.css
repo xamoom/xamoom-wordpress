@@ -39,6 +39,13 @@ h3.xamoom_headline {
 }
 
 /*
+ * Map
+ */
+.xamoom-map {
+    height:350px;
+}
+
+/*
  * YOUTUBE VIDEO WRAPPER
  */
 .xamoom-videoWrapper {

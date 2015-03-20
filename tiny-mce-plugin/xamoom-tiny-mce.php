@@ -8,7 +8,7 @@ function xamoom_includePageShortCode( $atts ) {
     extract( shortcode_atts( array('id' => 'noidinshortcode',), $atts ) );
     
     $response = CallAPI("POST",
-	"https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/get_content_by_content_id",
+	"https://xamoom-api-dot-xamoom-cloud.appspot.com/_ah/api/xamoomIntegrationApi/v1/get_content_by_content_id",
 	$data = array("content_id" => $id, "language" => $lang) );
     
     $content = json_decode($response, true);
@@ -156,11 +156,11 @@ function xamoom_includePageShortCode( $atts ) {
 		
 		//get spot map
 		$spot_map_response = CallAPI("GET",
-		"https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/spotmap/" . get_option('xamoom_api_key') . "/" . $block['spot_map_tag'] . "/" . $lang);
+		"https://xamoom-api-dot-xamoom-cloud.appspot.com/_ah/api/xamoomIntegrationApi/v1/spotmap/" . get_option('xamoom_api_key') . "/" . $block['spot_map_tag'] . "/" . $lang);
 		$spot_map = json_decode($spot_map_response, true);
 		
 		//render map
-		$html .= "<div style='height:350px;' id='" . $this_map_id . "'></div>";
+		$html .= "<div class='xamoom-map' id='" . $this_map_id . "'></div>";
 		
 		$html .= "<script language='JavaScript'>
 			    function renderMap_" . $map_id . "(width,height){
@@ -168,7 +168,7 @@ function xamoom_includePageShortCode( $atts ) {
 				
 				// add OpenStreetMap tile layer
 				L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
-				    attribution: '&copy; <a href=http://osm.org/copyright>OpenStreetMap</a> contributors'
+				    attribution: '&copy; <a href=\"http://leafletjs.com\" title=\"A JS library for interactive maps\">Leaflet</a> | Tiles courtesy of <a href=\"http://hot.openstreetmap.se/\" target=\"_blank\">OpenStreetMap Sweden</a> — Map data © <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>'
 				}).addTo(map);
 				
 				var bounds = [];";
