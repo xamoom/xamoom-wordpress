@@ -177,9 +177,15 @@ function xamoom_includePageShortCode( $atts ) {
 		    $html .= "\nvar LeafIcon = L.Icon.extend({options: {iconSize:[width, height],iconAnchor:[height / 2, height - 1],popupAnchor:  [0, -height]}}); ";
 		    $html .= "\nvar custom_marker = new LeafIcon({iconUrl: '" . $custom_map_marker ."'});";
 		}
-				
+		
+			
 		for($j = 0; $j < count($spot_map['items']); $j++){
 		    $marker = $spot_map['items'][$j];
+		    
+		    //kill line breaks from marker descriptions and display_name
+		    $marker['description'] = str_replace(array("\r", "\n"), "<br>", $marker['description']);
+		    $marker['display_name'] = str_replace(array("\r", "\n"), "<br>", $marker['display_name']);
+		    
 		    
 		    //extract image
 		    $image = "";
