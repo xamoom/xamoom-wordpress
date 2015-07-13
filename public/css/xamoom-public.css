@@ -16,13 +16,17 @@
  * Text formats
  */
 
+.xamoom_title { }
+
+.xamoom_caption { }
+
 .xamoom_smalltext {
     margin-bottom: 0px;
-    font-style: italic;
 }
 
 .xamoom_link {
     margin-bottom: 0px;
+    font-weight: bold;
 }
 
 .xamoom_audio {
@@ -61,4 +65,11 @@ h3.xamoom_headline {
 	left: 0;
 	width: 100%;
 	height: 100%;
+}
+
+/*
+ * EMPTY HTML CLEANER
+ */
+p:empty {
+  display: none;
 }

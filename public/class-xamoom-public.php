@@ -127,12 +127,12 @@ class xamoom_Public {
 
 			switch ($block_type) {
 		    case "0": //TEXT
-					if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+					if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 					if(array_key_exists("text",$block)){ $html .=  "<p>" . $block['text'] . "</p>"; }
 					break;
 
 		    case "1": //AUDIO
-					if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+					if(array_key_exists("title",$block)){ $html .=  "<p class='xamoom_title'>" . $block['title'] . "</p>"; }
 					if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
 					if(array_key_exists("file_id",$block)){
 					    $html .=  "<audio class='xamoom_audio' controls><source src='" . $block['file_id'] . "'>Your browser does not support the audio element.</audio>";
@@ -144,16 +144,16 @@ class xamoom_Public {
 					parse_str( parse_url( $block['youtube_url'], PHP_URL_QUERY ), $query_vars );
 					$youtube_id = $query_vars['v'];
 
-					if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 					$html .= "<div class='xamoom-videoWrapper'>" .
 						    		"<iframe width='560' height='349' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
 									 "</div>";
+					if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
 
 					break;
 
 		    case "3": //IMAGE
-					if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 					if(array_key_exists("file_id",$block)){ $html .=  "<img class='xamoom_image' src='" . $block['file_id'] . "' />"; }
+					if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
 					break;
 
 		    case "4": //LINK
@@ -223,18 +223,20 @@ class xamoom_Public {
 					$ebook_url = "";
 					if(array_key_exists("file_id",$block)){ $ebook_url = $block['file_id']; }
 
-					if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h3>"; }
-					if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
+					if(array_key_exists("title",$block)){
+						$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>" . $block['title'] . "</a></p>";
+					} else {
+						$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
+					}
 
-					$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
-					if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
+					if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
 					break;
 
 		    case "6": //CONTENT BLOCK CONTENT GET'S IGNORED, BECAUSE IT MAKES NO SENSE TO LINK TO XAMOOM CONTENT PAGES
 					break;
 
 		    case "7": //SOUNDCLOUD
-					if(array_key_exists("title",$block)){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+					if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 					$html .= "<iframe width='100%' height='150' scrolling='no' frameborder='no' " .
 						    "src='https://w.soundcloud.com/player/?url=" . $block['soundcloud_url'] . "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true'>" .
 						    "</iframe>";
@@ -264,7 +266,7 @@ class xamoom_Public {
 					break;
 
 		    case "9": //SPOTMAP
-					if(array_key_exists("title",$block)){ $html .=  "<h3 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+					if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_title'>" . $block['title'] . "</p>"; }
 					$this_map_id = "xamoom-map-" . $id . "-" . $map_id; //geet new map id that is unique on this page
 
 					//get spot map
