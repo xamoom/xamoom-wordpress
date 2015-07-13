@@ -64,6 +64,7 @@ class xamoom {
 
 		$this->plugin_name = 'xamoom';
 		$this->version = '1.0.0';
+		$this->api_endpoint = 'https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -130,11 +131,12 @@ class xamoom {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-		$plugin_admin = new xamoom_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new xamoom_Admin( $this->get_plugin_name(), $this->get_version(), $this->api_endpoint );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'addMenu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publishAPIKeyToJavaScript' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publishSystemEndpointToJavaScript' );
 	}
 
 	/**
@@ -145,11 +147,12 @@ class xamoom {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		$plugin_public = new xamoom_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new xamoom_Public( $this->get_plugin_name(), $this->get_version(), $this->api_endpoint );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'add_shortcode' );
 	}
-	
+
 	/**
 	 * Define settings registration
 	 *
@@ -159,7 +162,7 @@ class xamoom {
 	private function define_register_settings(){
 		$this->loader->add_action( 'admin_init', $this, 'register_settings' );
 	}
-	
+
 	/**
 	 * Register all settings
 	 * of the plugin.
@@ -171,8 +174,8 @@ class xamoom {
 		register_setting( 'xamoom-settings-group', 'xamoom_api_key' );
 		register_setting( 'xamoom-settings-group', 'xamoom_custom_css' );
 	}
-	
-	
+
+
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

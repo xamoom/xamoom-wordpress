@@ -46,11 +46,13 @@ class xamoom_Admin {
 	 * @since    1.0.0
 	 * @param      string    $plugin_name       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
+	 * @param      string    $api_endpoint    The url of the backend api
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $api_endpoint ) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->api_endpoint = $api_endpoint;
 
 	}
 
@@ -73,23 +75,27 @@ class xamoom_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/xamoom-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
-	
+
 	public function addMenu() {
 		//add_menu_page( "xamoom page", , "manage_options", "xamoom-admin", array($this,'showAdmin'), null, 6 );
 		add_options_page( "xamoom", "xamoom", "manage_options", "xamoom-settings", array($this,'showAdmin'));
 	}
-	
+
 	public function publishAPIKeyToJavaScript() {
 		print "<script type='text/javascript'>var xamoom_api_key = '" . get_option('xamoom_api_key') . "';</script>";
 	}
-	
+
+	public function publishSystemEndpointToJavaScript() {
+		print "<script type='text/javascript'>var xamoom_api_endpoint = '" . $this->api_endpoint . "';</script>";
+	}
+
 	public function showAdmin(){
 		?>
 		<div class="wrap">
 			<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'xamoom-settings-group' ); ?>
-				
+
 				<table class="form-table">
 					<tbody>
 						<tr>
