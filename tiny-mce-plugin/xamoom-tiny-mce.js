@@ -174,7 +174,7 @@ function xamoomLoadPages(params,append,cursor){
         ed.addButton('xamoom-insert-content', {
             title : 'xamoom',
             cmd : 'insert-xamoom-shortcode',
-            image : 'https://pbs.twimg.com/profile_images/443349334688407552/qDGgZGXO_normal.png',
+            image : 'https://storage.googleapis.com/xamoom-public-resources/icon.png',
         });
 
         //register click command
