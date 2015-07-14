@@ -1,30 +1,36 @@
 <?php
+/*
+xamoom Wordpress Plugin
+Copyright (C) 2015  xamoom GmbH
+
+This file is part of xamoom-wordpress.
+
+xamoom-wordpress is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+xamoom-wordpress is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with xamoom-wordpress.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  * Fired during plugin deactivation
  *
- * @link       http://xamoom.com
- * @since      1.0.0
- *
  * @package    xamoom
  * @subpackage xamoom/includes
- */
-
-/**
- * Fired during plugin deactivation.
- *
- * This class defines all code necessary to run during the plugin's deactivation.
- *
- * @since      1.0.0
- * @package    xamoom
- * @subpackage xamoom/includes
- * @author     Bruno Hautzenberger <bruno@xamoom.com>
+ * @author     xamoom GmbH
  */
 class xamoom_Deactivator {
 
-	
-	public static function deactivate() {
 
+	public static function deactivate() {
+		//nothing to do here so far.
 	}
 
 }

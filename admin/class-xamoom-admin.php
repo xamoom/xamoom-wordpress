@@ -1,24 +1,31 @@
 <?php
 
-/**
- * The dashboard-specific functionality of the plugin.
- *
- * @link       http://xamoom.com
- * @since      1.0.0
- *
- * @package    xamoom
- * @subpackage xamoom/admin
- */
+/*
+xamoom Wordpress Plugin
+Copyright (C) 2015  xamoom GmbH
+
+This file is part of xamoom-wordpress.
+
+xamoom-wordpress is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+xamoom-wordpress is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with xamoom-wordpress.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  * The dashboard-specific functionality of the plugin.
  *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the dashboard-specific stylesheet and JavaScript.
- *
  * @package    xamoom
  * @subpackage xamoom/admin
- * @author     Bruno Hautzenberger <bruno@xamoom.com>
+ * @author     xamoom GmbH
  */
 class xamoom_Admin {
 
@@ -76,20 +83,39 @@ class xamoom_Admin {
 
 	}
 
-	public function addMenu() {
-		//add_menu_page( "xamoom page", , "manage_options", "xamoom-admin", array($this,'showAdmin'), null, 6 );
-		add_options_page( "xamoom", "xamoom", "manage_options", "xamoom-settings", array($this,'showAdmin'));
+	/**
+	 * Register the Admin Settings Page
+	 *
+	 * @since    1.0.0
+	 */
+	public function register_settings_page() {
+		add_options_page( "xamoom", "xamoom", "manage_options", "xamoom-settings", array($this,'show_settings_page'));
 	}
 
-	public function publishAPIKeyToJavaScript() {
+	/**
+	 * Publish the API Key from settings as a javascript var. (Admin Backend Only)
+	 *
+	 * @since    1.0.0
+	 */
+	public function publish_api_key_to_js() {
 		print "<script type='text/javascript'>var xamoom_api_key = '" . get_option('xamoom_api_key') . "';</script>";
 	}
 
-	public function publishSystemEndpointToJavaScript() {
+	/**
+	 * Publish the API Endpoint URL as a javascript var. (Admin Backend Only)
+	 *
+	 * @since    1.0.0
+	 */
+	public function publish_api_endpoint_to_js() {
 		print "<script type='text/javascript'>var xamoom_api_endpoint = '" . $this->api_endpoint . "';</script>";
 	}
 
-	public function showAdmin(){
+	/**
+	 * Renders the actual settings page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function show_settings_page(){
 		?>
 		<div class="wrap">
 			<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>

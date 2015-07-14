@@ -1,29 +1,34 @@
 <?php
 
+/*
+xamoom Wordpress Plugin
+Copyright (C) 2015  xamoom GmbH
+
+This file is part of xamoom-wordpress.
+
+xamoom-wordpress is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or
+(at your option) any later version.
+
+xamoom-wordpress is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with xamoom-wordpress.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  * The file that defines the core plugin class
  *
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the dashboard.
  *
- * @link       http://xamoom.com
- * @since      1.0.0
- *
  * @package    xamoom
  * @subpackage xamoom/includes
- */
-
-/**
- * This is used to define internationalization, dashboard-specific hooks, and
- * public-facing site hooks.
- *
- * Also maintains the unique identifier of this plugin as well as the current
- * version of the plugin.
- *
- * @since      1.0.0
- * @package    xamoom
- * @subpackage xamoom/includes
- * @author     Bruno Hautzenberger <bruno@xamoom.com>
+ * @author     xamoom GmbH
  */
 class xamoom {
 
@@ -134,9 +139,9 @@ class xamoom {
 		$plugin_admin = new xamoom_Admin( $this->get_plugin_name(), $this->get_version(), $this->api_endpoint );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'addMenu' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publishAPIKeyToJavaScript' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publishSystemEndpointToJavaScript' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_settings_page' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_api_key_to_js' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_api_endpoint_to_js' );
 	}
 
 	/**
@@ -164,7 +169,7 @@ class xamoom {
 	}
 
 	/**
-	 * Register all settings
+	 * Registers all settings
 	 * of the plugin.
 	 *
 	 * @since    1.0.0
