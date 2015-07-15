@@ -104,7 +104,7 @@ class xamoom_Public {
 		extract( shortcode_atts( array('id' => 'noidinshortcode',), $atts ) );
 
 		//call backend apiu
-		$response = $this->call_api("POST","https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/get_content_by_content_id",
+		$response = $this->call_api("POST",$this->api_endpoint . "get_content_by_content_id",
 		$data = array("content_id" => $id, "language" => $lang) );
 
 		$content = json_decode($response, true);
@@ -270,7 +270,7 @@ class xamoom_Public {
 					$this_map_id = "xamoom-map-" . $id . "-" . $map_id; //geet new map id that is unique on this page
 
 					//get spot map
-					$spot_map_response = $this->call_api("GET","https://xamoom-api-dot-xamoom-cloud-dev.appspot.com/_ah/api/xamoomIntegrationApi/v1/spotmap/" . get_option('xamoom_api_key') . "/" . $block['spot_map_tag'] . "/" . $lang);
+					$spot_map_response = $this->call_api("GET",$this->api_endpoint . "spotmap/" . get_option('xamoom_api_key') . "/" . $block['spot_map_tag'] . "/" . $lang);
 					$spot_map = json_decode($spot_map_response, true);
 
 					//render map
