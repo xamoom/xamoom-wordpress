@@ -73,7 +73,7 @@ function xamoomInsertShortCode(content_id){
                             jQuery('#title').focus();
                            },
     error: function(){
-                      alert("Something went wrong. Please check you API Key on Settings->xamoom.");
+                      alert(i18n_api_key_error);
                      },
     type: 'GET',
     url: xamoom_api_endpoint  + 'content/' + content_id + "/" + selected_lang
@@ -145,14 +145,14 @@ function xamoomLoadPages(params,append,cursor){
                                                       <select name="language" id="xamoom-page-language' + data.items[i].content_id + '">' + langs + '</select>\
                                                   </td>\
                                                   <td align="right" width="50">\
-                                                      <input type="button" onClick="xamoomInsertShortCode(\'' + data.items[i].content_id + '\')" id="shortcode-submit-id" class="button-primary" value="Insert" name="submit" />\
+                                                      <input type="button" onClick="xamoomInsertShortCode(\'' + data.items[i].content_id + '\')" id="shortcode-submit-id" class="button-primary" value="' + i18n_insert + '" name="submit" />\
                                                   </td>\
                                               </tr>\
                                             ');
         }
       },
       error: function(){ //something went wrong (check console)
-          alert("Search failed.");
+          alert(i18n_generic_error);
       },
       processData: false,
       type: 'GET',
@@ -216,32 +216,34 @@ function xamoomLoadPages(params,append,cursor){
                               <p class="search-box">\
                                   <label class="screen-reader-text" for="xamoom-page-search-input">Search Pages:</label>\
                                   <input type="search" id="xamoom-page-search-input" name="s" value="">\
-                                  <input type="button" onClick="xamoomSearchPages();" name="" id="search-submit" class="button" value="Search Pages">\
+                                  <input type="button" onClick="xamoomSearchPages();" name="" id="search-submit" class="button" value="' + i18n_search_pages + '">\
                               </p>\
-                              <table class="widefat">\
-                                  <thead>\
-                                      <tr>\
-                                          <th scope="col" id="content-name" class="manage-column" style="">\
-                                              Name\
-                                          </th>\
-                                          <th scope="col" id="comment" class="manage-column" style="">\
-                                              Language\
-                                          </th>\
-                                          <th scope="col" id="response" class="manage-column column-response sortable desc" style="">\
-                                              &nbsp;\
-                                          </th>\
-                                      </tr>\
-                                  </thead>\
-                                  <tfoot id="xamoom-load-more">\
-                                      <tr>\
-                                          <th colspan="3" align="center">\
-                                              <p align="center"><input type="button" onClick="xamoomLoadPages(null,true,xamoom_search_cursor);" name="" class="button" value="Load More"></p>\
-                                          </th>\
-                                      </tr>\
-                                  </tfoot>\
-                                  <tbody id="xamoom-pages-list">\
-                                  </tbody>\
-                              </table>\
+                              <div id="xamoom-content-list">\
+                                <table class="widefat">\
+                                    <thead>\
+                                        <tr>\
+                                            <th scope="col" id="content-name" class="manage-column" style="">\
+                                                ' + i18n_name + '\
+                                            </th>\
+                                            <th scope="col" id="comment" class="manage-column" style="">\
+                                                ' + i18n_languages + '\
+                                            </th>\
+                                            <th scope="col" id="response" class="manage-column column-response sortable desc" style="">\
+                                                &nbsp;\
+                                            </th>\
+                                        </tr>\
+                                    </thead>\
+                                    <tfoot id="xamoom-load-more">\
+                                        <tr>\
+                                            <th colspan="3" align="center">\
+                                                <p align="center"><input type="button" onClick="xamoomLoadPages(null,true,xamoom_search_cursor);" name="" class="button" value="' + i18n_load_more + '"></p>\
+                                            </th>\
+                                        </tr>\
+                                    </tfoot>\
+                                    <tbody id="xamoom-pages-list">\
+                                    </tbody>\
+                                </table>\
+                              </div>\
                           </div>');
 
     //get popup container and add search dialog html

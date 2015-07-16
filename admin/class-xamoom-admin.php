@@ -111,6 +111,23 @@ class xamoom_Admin {
 	}
 
 	/**
+	 * Publish the API Endpoint URL as a javascript var. (Admin Backend Only)
+	 *
+	 * @since    1.0.0
+	 */
+	public function publish_i18n_strings_to_js() {
+		print "<script type='text/javascript'>";
+		print "var i18n_api_key_error = '" . __('Something went wrong. Please check you API Key on Settings xamoom.','xamoom') . "';";
+		print "var i18n_search_pages = '" . __('Search Pages','xamoom') . "';";
+		print "var i18n_load_more = '" . __('Load more','xamoom') . "';";
+		print "var i18n_generic_error = '" . __('Something went wrong.','xamoom') . "';";
+		print "var i18n_name = '" . __('Name','xamoom') . "';";
+		print "var i18n_languages = '" . __('Language','xamoom') . "';";
+		print "var i18n_insert = '" . __('Insert','xamoom') . "';";
+		print "</script>";
+	}
+
+	/**
 	 * Renders the actual settings page.
 	 *
 	 * @since    1.0.0
@@ -128,14 +145,18 @@ class xamoom_Admin {
 							<th scope="row"><label for="xamoom_api_key">API Key</label></th>
 							<td>
 								<input name="xamoom_api_key" type="text" id="xamoom_api_key" value="<?php echo get_option('xamoom_api_key'); ?>" class="regular-text code">
-								<p class="description">This API key is bound to your xamoom System. If you do not have a xamoom system you can order one on <a href="http://xamoom.com">xamoom.com</a>. If you have forgotten your API key please contact <a href="mailto:support@xamoom.com">support@xamoom.com</a>.</p>
+								<p class="description">
+									<?php _e('This API key is bound to your xamoom System. If you do not have a xamoom system you can order one on','xamoom'); ?> <a href="http://xamoom.com">xamoom.com</a>. <?php _e('If you have forgotten your API key please contact','xamoom'); ?> <a href="mailto:support@xamoom.com">support@xamoom.com</a>.
+								</p>
 							</td>
 						</tr>
 						<tr>
 							<th scope="row"><label for="xamoom_custom_css">Custom-CSS</label></th>
 							<td>
 								<textarea name="xamoom_custom_css" id="xamoom_custom_css" class="large-text code" rows="4"><?php echo get_option('xamoom_custom_css'); ?></textarea>
-								<p class="description">The following CSS classes are used by xamoom to display and format the content: .xamoom_link, .xamoom_smalltext, .xamoom_audio, .xamoom_headline, .xamoom_image, .xamoom-videoWrapper and .xamoom-videoWrapper iframe.<br/> Feel free to add your custom styling here.</p>
+								<p class="description">
+									<?php _e('The following CSS classes are used by xamoom to display and format the content: .xamoom_caption, .xamoom_title, .xamoom_link, .xamoom_smalltext, .xamoom_audio, .xamoom_headline, .xamoom_image, .xamoom-videoWrapper and .xamoom-videoWrapper-iframe.','xamoom'); ?><br/>
+								</p>
 							</td>
 						</tr>
 					</tbody>
