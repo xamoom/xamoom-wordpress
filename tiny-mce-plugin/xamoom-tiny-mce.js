@@ -65,8 +65,8 @@ function xamoomInsertShortCode(content_id){
   //get content to update title and excerpt
   jQuery.ajax({
     contentType: 'application/json',
-    data: JSON.stringify({content_id:content_id,language:selected_lang,api_key:xamoom_api_key}),
     dataType: 'json',
+    headers: {"Authorization":xamoom_api_key},
     success: function(data){
                             jQuery('#title').val(data.title);
                             jQuery('#excerpt').val(data.description);
@@ -75,8 +75,8 @@ function xamoomInsertShortCode(content_id){
     error: function(){
                       alert("Something went wrong. Please check you API Key on Settings->xamoom.");
                      },
-    type: 'POST',
-    url: xamoom_api_endpoint  + 'get_content_by_content_id'
+    type: 'GET',
+    url: xamoom_api_endpoint  + 'content/' + content_id + "/" + selected_lang
   });
 }
 
@@ -100,15 +100,13 @@ function xamoomLoadPages(params,append,cursor){
         params['cursor'] = cursor;
     }
 
-    //add api key to the request aprams
-    params['api_key'] = xamoom_api_key;
-
     //the actual search request to the xamoom backend API
     jQuery.ajax({
       contentType: 'application/json',
       data: JSON.stringify(params),
+      headers: {"Authorization":xamoom_api_key},
       dataType: 'json',
-      success: function(data){ //üprocess response if everything went well
+      success: function(data){ //process response if everything went well
         if (!append) { //if append == False clear the list.
             jQuery("#xamoom-pages-list").empty()
         }
@@ -157,8 +155,8 @@ function xamoomLoadPages(params,append,cursor){
           alert("Search failed.");
       },
       processData: false,
-      type: 'POST',
-      url: xamoom_api_endpoint  + 'content_query'
+      type: 'GET',
+      url: xamoom_api_endpoint  + 'content?' + jQuery.param(params)
     });
 }
 
@@ -249,6 +247,10 @@ function xamoomLoadPages(params,append,cursor){
     //get popup container and add search dialog html
     var table = form.find('table');
   	form.appendTo('body').hide();
+  });
+
+  jQuery('input[type=search]').on('search', function () {
+    xamoomSearchPages();
   });
 
 })(); //excute plugin code

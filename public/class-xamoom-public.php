@@ -104,8 +104,7 @@ class xamoom_Public {
 		extract( shortcode_atts( array('id' => 'noidinshortcode',), $atts ) );
 
 		//call backend apiu
-		$response = $this->call_api("POST",$this->api_endpoint . "get_content_by_content_id",
-		$data = array("content_id" => $id, "language" => $lang) );
+		$response = $this->call_api("GET",$this->api_endpoint . "content/" . $id . "/" . $lang);
 
 		$content = json_decode($response, true);
 
@@ -270,7 +269,7 @@ class xamoom_Public {
 					$this_map_id = "xamoom-map-" . $id . "-" . $map_id; //geet new map id that is unique on this page
 
 					//get spot map
-					$spot_map_response = $this->call_api("GET",$this->api_endpoint . "spotmap/" . get_option('xamoom_api_key') . "/" . $block['spot_map_tag'] . "/" . $lang);
+					$spot_map_response = $this->call_api("GET",$this->api_endpoint . "spotmap?map_tag=" . $block['spot_map_tag'] . "&language=" . $lang);
 					$spot_map = json_decode($spot_map_response, true);
 
 					//render map
@@ -360,25 +359,33 @@ class xamoom_Public {
 	        case "POST":
 	          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
 
-	          if ($data)
+	          if ($data){
 	              curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
 
-						curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-						    'Content-Type: application/json',
-						    'Content-Length: ' . strlen($data_string),
-						    'Authorization: ' . get_option('xamoom_api_key'))
-						);
+								curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+										'Content-Type: application/json',
+										'Content-Length: ' . strlen($data_string),
+										'Authorization: ' . get_option('xamoom_api_key'))
+								);
+						}
 
 		        break;
 
 					case "GET":
 	          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+
+						curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+								'Authorization: ' . get_option('xamoom_api_key'))
+						);
+
 	          break;
 
 	        default:
 	          if ($data)
 	            $url = sprintf("%s?%s", $url, http_build_query($data));
 	    }
+
+
 
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 	    curl_setopt($curl, CURLOPT_URL, $url);
