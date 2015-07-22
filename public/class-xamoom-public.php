@@ -287,7 +287,10 @@ class xamoom_Public {
 
 					//if there is a custom marker, set it up.
 					if($custom_map_marker){
-					    $html .= "\nvar LeafIcon = L.Icon.extend({options: {iconSize:[width, height],iconAnchor:[height / 2, height - 1],popupAnchor:  [0, -height]}}); ";
+							$html .= "\nvar factor = 33 / height;";
+							$html .= "\nvar new_height = parseInt(height * factor);";
+							$html .= "\nvar new_width = parseInt(width * factor);";
+					    $html .= "\nvar LeafIcon = L.Icon.extend({options: {iconSize:[new_width, new_height],iconAnchor:[new_height / 2, new_height - 1],popupAnchor:  [0, -new_height]}}); ";
 					    $html .= "\nvar custom_marker = new LeafIcon({iconUrl: '" . $custom_map_marker ."'});";
 					}
 
