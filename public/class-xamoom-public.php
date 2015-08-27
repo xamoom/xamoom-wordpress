@@ -299,8 +299,11 @@ class xamoom_Public {
 					    $marker = $spot_map['items'][$j];
 
 					    //kill line breaks from marker descriptions and display_name
-					    $marker['description'] = str_replace(array("\r", "\n"), "<br>", $marker['description']);
+							$marker['description'] = str_replace(array("\r", "\n"), "<br>", $marker['description']);
 					    $marker['display_name'] = str_replace(array("\r", "\n"), "<br>", $marker['display_name']);
+
+							$marker['description'] = str_replace(array('"'), '\"', $marker['description']);
+					    $marker['display_name'] = str_replace(array("'"), "\'", $marker['display_name']);
 
 					    //extract image
 					    $image = "";
