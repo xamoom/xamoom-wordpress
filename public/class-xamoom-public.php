@@ -138,14 +138,22 @@ class xamoom_Public {
 					}
 					break;
 
-		    case "2": //YOUTUBE
-					//extract youtube id
-					parse_str( parse_url( $block['youtube_url'], PHP_URL_QUERY ), $query_vars );
-					$youtube_id = $query_vars['v'];
+		    case "2": //VIDEO
+					if (strpos($block['video_url'],'youtube.com') == false && strpos($block['video_url'],'youtu.be') == false) { //VIDEO FILE
+						//html5 video player
+						$html .= "<video width='100%' controls>
+												<source src='" . $block['video_url'] . "'>
+											  Your browser does not support the video tag.
+											</video>";
+					} else { //YOUTUBE
+						//extract youtube id
+						parse_str( parse_url( $block['video_url'], PHP_URL_QUERY ), $query_vars );
+						$youtube_id = $query_vars['v'];
 
-					$html .= "<div class='xamoom-videoWrapper'>" .
-						    		"<iframe width='560' height='349' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
-									 "</div>";
+						$html .= "<div class='xamoom-videoWrapper'>" .
+							    		"<iframe width='560' height='349' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
+										 "</div>";
+					}
 					if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
 
 					break;
