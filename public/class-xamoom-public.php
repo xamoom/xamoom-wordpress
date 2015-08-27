@@ -159,8 +159,12 @@ class xamoom_Public {
 					break;
 
 		    case "3": //IMAGE
-					if(array_key_exists("file_id",$block)){ $html .=  "<img class='xamoom_image' src='" . $block['file_id'] . "' />"; }
+					$scale = 100;
+					if(array_key_exists("scale_x",$block) && $block['scale_x'] != ""){ $scale =  $block['scale_x']; }
+
+					if(array_key_exists("file_id",$block)){ $html .=  "<img class='xamoom_image' style='width:" . $scale . "%;' src='" . $block['file_id'] . "' />"; }
 					if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
+
 					break;
 
 		    case "4": //LINK
