@@ -33,7 +33,7 @@ function xamoomSearchPages(){
   var query = jQuery('#xamoom-page-search-input').val();
 
   //prepare search params
-  var params = { page_size: "10", ft_query: query};
+  var params = { "page[size]": "10", "filter[name]": query};
 
   //load the pages using these params from the xamoom backend.
   xamoomLoadPages(params,false,null);
@@ -66,17 +66,17 @@ function xamoomInsertShortCode(content_id){
   jQuery.ajax({
     contentType: 'application/json',
     dataType: 'json',
-    headers: {"Authorization":xamoom_api_key},
+    headers: {"ApiKey":xamoom_api_key},
     success: function(data){
-                            jQuery('#title').val(data.title);
-                            jQuery('#excerpt').val(data.description);
+                            jQuery('#title').val(data['data']['attributes']['display-name']);
+                            jQuery('#excerpt').val(data['data']['attributes']['description']);
                             jQuery('#title').focus();
                            },
     error: function(){
                       alert(i18n_api_key_error);
                      },
     type: 'GET',
-    url: xamoom_api_endpoint  + 'content/' + content_id + "/" + selected_lang
+    url: xamoom_api_endpoint  + 'contents/' + content_id + "?lang=" + selected_lang
   });
 }
 
@@ -97,14 +97,14 @@ function xamoomLoadPages(params,append,cursor){
 
     //of there is a cursor (page > 1) we have to ad it to the request
     if (cursor != null) {
-        params['cursor'] = cursor;
+        params['page[cursor]'] = cursor;
     }
 
     //the actual search request to the xamoom backend API
     jQuery.ajax({
       contentType: 'application/json',
       data: JSON.stringify(params),
-      headers: {"Authorization":xamoom_api_key},
+      headers: {"ApiKey":xamoom_api_key},
       dataType: 'json',
       success: function(data){ //process response if everything went well
         if (!append) { //if append == False clear the list.
@@ -112,21 +112,21 @@ function xamoomLoadPages(params,append,cursor){
         }
 
         //save cursor
-        xamoom_search_cursor = data.cursor;
+        xamoom_search_cursor = data['meta']['cursor'];
 
         //hide load more if has_more is false
-        if (data.has_more == "False") {
+        if (data['meta']['has-more'] == false) {
            jQuery('#xamoom-load-more').hide();
         } else {
             jQuery('#xamoom-load-more').show();
         }
 
         //loop through the pages in the response and add them to the list
-        for(i = 0; i < data.items.length; i++){
+        for(i = 0; i < data['data'].length; i++){
           //append available language options to the page entry
           langs = ""
-          for (j = 0; j < data.items[i].languages.length; j++) {
-              langs += "<option class='level-0' value='" + data.items[i].languages[j] + "'>" + data.items[i].languages[j] + "</option>"
+          for (j = 0; j < data['data'][i]['attributes']['languages'].length; j++) {
+              langs += "<option class='level-0' value='" + data['data'][i]['attributes']['languages'][j] + "'>" + data['data'][i]['attributes']['languages'][j] + "</option>"
           }
 
           //every second line get'S an "alternate" css attribute to make it look different.
@@ -139,13 +139,13 @@ function xamoomLoadPages(params,append,cursor){
           jQuery("#xamoom-pages-list").append('\
                                               <tr class="' +  alternate + '">\
                                                   <td>\
-                                                      <p class="row-title">' + data.items[i].name + '</p>\
+                                                      <p class="row-title">' + data['data'][i]['attributes']['display-name'] + '</p>\
                                                   </td>\
                                                   <td align="center" width="50">\
-                                                      <select name="language" id="xamoom-page-language' + data.items[i].content_id + '">' + langs + '</select>\
+                                                      <select name="language" id="xamoom-page-language' + data['data'][i]['id'] + '">' + langs + '</select>\
                                                   </td>\
                                                   <td align="right" width="50">\
-                                                      <input type="button" onClick="xamoomInsertShortCode(\'' + data.items[i].content_id + '\')" id="shortcode-submit-id" class="button-primary" value="' + i18n_insert + '" name="submit" />\
+                                                      <input type="button" onClick="xamoomInsertShortCode(\'' + data['data'][i]['id'] + '\')" id="shortcode-submit-id" class="button-primary" value="' + i18n_insert + '" name="submit" />\
                                                   </td>\
                                               </tr>\
                                             ');
@@ -156,7 +156,7 @@ function xamoomLoadPages(params,append,cursor){
       },
       processData: false,
       type: 'GET',
-      url: xamoom_api_endpoint  + 'content?' + jQuery.param(params)
+      url: xamoom_api_endpoint  + 'contents?' + jQuery.param(params)
     });
 }
 

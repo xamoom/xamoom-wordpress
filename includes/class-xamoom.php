@@ -69,7 +69,8 @@ class xamoom {
 
 		$this->plugin_name = 'xamoom';
 		$this->version = '1.0.2';
-		$this->api_endpoint = 'https://xamoom-api-dot-xamoom-cloud.appspot.com/_ah/api/xamoomIntegrationApi/v1/';
+		#$this->api_endpoint = 'https://xamoom-api-dot-xamoom-cloud.appspot.com/_ah/api/xamoomIntegrationApi/v1/';
+		$this->api_endpoint = 'https://22x-dot-xamoom-api-dot-xamoom-cloud-dev.appspot.com/_api/v2/integration/';
 
 		$this->load_dependencies();
 		$this->set_locale();
