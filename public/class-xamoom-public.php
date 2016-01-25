@@ -352,13 +352,13 @@ class xamoom_Public {
 
 			    //extract image
 			    $image = "";
-			    if(array_key_exists("image",$marker)){ $image =  "<img style='width:100%;' src='" . $marker['image'] . "' /><br />"; }
+			    if(array_key_exists("image",$marker)){ $image =  "<img style=\"width:100%;\" src=\"" . $marker['image'] . "\" /><br />"; }
 
 			    // add a markers
 			    if($custom_map_marker){
-						$html .= "\nL.marker([" . $marker['position-latitude'] . ", " . $marker['position-longitude'] . "],{icon: custom_marker}).addTo(map).bindPopup(\"<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "\");";
+						$html .= "\nL.marker([" . $marker['position-latitude'] . ", " . $marker['position-longitude'] . "],{icon: custom_marker}).addTo(map).bindPopup('<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "');";
 			    } else {
-						$html .= "\nL.marker([" . $marker['position-latitude'] . ", " . $marker['position-longitude'] . "]).addTo(map).bindPopup(\"<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "\");";
+						$html .= "\nL.marker([" . $marker['position-latitude'] . ", " . $marker['position-longitude'] . "]).addTo(map).bindPopup('<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "');";
 			    }
 
 			    $html .= "\nbounds.push([" . $marker['position-latitude'] . "," . $marker['position-longitude'] . "]);";
@@ -366,7 +366,7 @@ class xamoom_Public {
 
 			//finalze JavaScript function to render map block
 			$html .= "map.fitBounds(bounds);\n
-				  map.zoomOut();\n
+				  //map.zoomOut();\n
 				}";
 
 			//start map rendering in JS
