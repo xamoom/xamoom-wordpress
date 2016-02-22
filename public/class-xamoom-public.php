@@ -159,8 +159,12 @@ class xamoom_Public {
 				if (strpos($block['video-url'],'vimeo.com') == true) { //vimeo video
 					$urlSegments = explode('/', $block['video-url']);
 					$vimeoVideoID =  $urlSegments[sizeof($urlSegments)-1];
+						$html .= "<div class='xamoom-videoWrapper'>";
 						$html .= '<iframe src="//player.vimeo.com/video/'. $vimeoVideoID .'" width="560" height="349" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
 						.'</iframe>';
+						$html .= "</div>";
+					
+						
 				}	else if (strpos($block['video-url'],'youtube.com') == false && strpos($block['video-url'],'youtu.be') == false) { //VIDEO FILE
 				//html5 video player
 				$html .= "<video width='100%' controls>
