@@ -156,17 +156,17 @@ class xamoom_Public {
 			break;
 
 		    case "2": //VIDEO
-			if (strpos($block['video-url'],'youtube.com') == false && strpos($block['video-url'],'youtu.be') == false) { //VIDEO FILE
+				if (strpos($block['video-url'],'vimeo.com') == true) { //vimeo video
+					$urlSegments = explode('/', $block['video-url']);
+					$vimeoVideoID =  $urlSegments[sizeof($urlSegments)-1];
+						$html .= '<iframe src="//player.vimeo.com/video/'. $vimeoVideoID .'" width="560" height="349" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
+						.'</iframe>';
+				}	else if (strpos($block['video-url'],'youtube.com') == false && strpos($block['video-url'],'youtu.be') == false) { //VIDEO FILE
 				//html5 video player
 				$html .= "<video width='100%' controls>
 										<source src='" . $block['video-url'] . "'>
 									  Your browser does not support the video tag.
 									</video>";
-			} else if (strpos($block['video-url'],'vimeo.com') == true) { //vimeo video
-				$urlSegments = explode('/', $block['video-url']);
-				$vimeoVideoID =  $urlSegments[sizeof($urlSegments)-1];
-					$html .= '<iframe src="//player.vimeo.com/video/'. $vimeoVideoID .'" width="560" height="349" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
-					.'</iframe>';
 			} else { //YOUTUBE
 				//extract youtube id
 				parse_str( parse_url( $block['video-url'], PHP_URL_QUERY ), $query_vars );
