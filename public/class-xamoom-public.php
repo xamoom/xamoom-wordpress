@@ -107,17 +107,17 @@ class xamoom_Public {
 		$response = $this->call_api("GET",$this->api_endpoint . "contents/" . $id . "?lang=" . $lang);
 
 		$content = json_decode($response, true);
-		
+
 		//seperate includes into blocks and style
 		$content_blocks = array();
 		$style = false;
 		for($i = 0; $i < count($content['included']); $i++){
 			$inc = $content['included'][$i];
-			
+
 			if($inc['type'] == "contentblocks"){
 				array_push($content_blocks,$inc);
 			}
-			
+
 			if($inc['type'] == "styles"){
 				$style = $inc;
 			}
@@ -133,7 +133,7 @@ class xamoom_Public {
 		$html = "<style type='text/css'>" . get_option('xamoom_custom_css') . "</style>";
 
 		$map_id = 1; //used to give seperate ids to seperate spotmaps
-		
+
 		//render block HTML for each content block
 		for($i = 0; $i < count($content_blocks); $i++){
 			$block = $content_blocks[$i]['attributes'];
@@ -162,6 +162,11 @@ class xamoom_Public {
 										<source src='" . $block['video-url'] . "'>
 									  Your browser does not support the video tag.
 									</video>";
+			} else if (strpos($block['video-url'],'vimeo.com') == true) { //vimeo video
+				$urlSegments = explode('/', $block['video-url']);
+				$vimeoVideoID =  $urlSegments[sizeof($urlSegments)-1];
+					$html .= '<iframe src="//player.vimeo.com/video/'. $vimeoVideoID .'" width="560" height="349" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
+					.'</iframe>';
 			} else { //YOUTUBE
 				//extract youtube id
 				parse_str( parse_url( $block['video-url'], PHP_URL_QUERY ), $query_vars );
@@ -177,20 +182,20 @@ class xamoom_Public {
 		    case "3": //IMAGE
 			$scale = 100;
 			if(array_key_exists("scale-x",$block) && $block['scale-x'] != ""){ $scale =  $block['scale-x']; }
-			
+
 			$alt_text = "";
 			if(array_key_exists("alt-text",$block) && $block['alt-text'] != ""){ $alt_text =  $block['alt-text']; }
-			
+
 			$link_url = null;
 			if(array_key_exists("link-url",$block) && $block['link-url'] != ""){ $link_url =  $block['link-url']; }
 
 			if($link_url != null){ $html .= "<a href='" . $link_url . "' target='_blank'>"; }
-			
+
 			if(array_key_exists("file-id",$block)){ $html .=  "<img class='xamoom_image' alt='". $alt_text . "' style='width:" . $scale . "%;' src='" . $block['file-id'] . "' />"; }
 			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
-			
+
 			if($link_url != null){ $html .= "</a>"; }
-			
+
 			break;
 
 		    case "4": //LINK
@@ -312,11 +317,11 @@ class xamoom_Public {
 				$spot_map_response = $this->call_api("GET",$this->api_endpoint . "spots?filter[tags]=[\"" . implode("\",\"", $block['spot-map-tags']) . "\"]&page[cursor]=" . $cursor . "&filter[has-location]=true&&page[size]=100&lang=" . $lang);
 				$resp = json_decode($spot_map_response, true);
 				$spot_map['items'] = array_merge($spot_map['items'], $resp['data']);
-				
+
 				$cursor = $resp['meta']['cursor'];
 				$has_more = $resp['meta']['has-more'];
 			}
-			
+
 			//render map
 			$html .= "<div class='xamoom-map' id='" . $this_map_id . "'></div>";
 
