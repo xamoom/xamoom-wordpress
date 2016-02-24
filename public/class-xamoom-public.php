@@ -365,12 +365,12 @@ class xamoom_Public {
 
 			    // add a markers
 			    if($custom_map_marker){
-						$html .= "\nL.marker([" . $marker['position-latitude'] . ", " . $marker['position-longitude'] . "],{icon: custom_marker}).addTo(map).bindPopup('<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "');";
+						$html .= "\nL.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "],{icon: custom_marker}).addTo(map).bindPopup('<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "');";
 			    } else {
-						$html .= "\nL.marker([" . $marker['position-latitude'] . ", " . $marker['position-longitude'] . "]).addTo(map).bindPopup('<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "');";
+						$html .= "\nL.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lat'] . "]).addTo(map).bindPopup('<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "');";
 			    }
 
-			    $html .= "\nbounds.push([" . $marker['position-latitude'] . "," . $marker['position-longitude'] . "]);";
+			    $html .= "\nbounds.push([" . $marker['location']['lat'] . "," . $marker['location']['lon'] . "]);";
 			}
 
 			//finalze JavaScript function to render map block
