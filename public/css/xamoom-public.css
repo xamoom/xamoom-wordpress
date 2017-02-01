@@ -39,6 +39,14 @@ along with xamoom-wordpress.  If not, see <http://www.gnu.org/licenses/>.
 
 .xamoom_caption { }
 
+.xamoom_copyright {
+    text-align:right;
+    font-style: italic;
+    font-size: 11px;
+    margin-top: -5px;
+    margin-right: 2px;
+}
+
 .xamoom_smalltext {
     margin-bottom: 0px;
 }

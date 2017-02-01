@@ -195,8 +195,10 @@ class xamoom_Public {
 
 			if($link_url != null){ $html .= "<a href='" . $link_url . "' target='_blank'>"; }
 
+            if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
 			if(array_key_exists("file-id",$block)){ $html .=  "<img class='xamoom_image' alt='". $alt_text . "' style='width:" . $scale . "%;' src='" . $block['file-id'] . "' />"; }
-			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
+            if(array_key_exists("copyright",$block) && $block['copyright'] != ""){ $html .=  "<p class='xamoom_copyright'>" . $block['copyright'] . "</p>"; }
+
 
 			if($link_url != null){ $html .= "</a>"; }
 
