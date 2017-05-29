@@ -71,7 +71,7 @@ class xamoom_Public {
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/xamoom-public.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . "-FONTAWESOME", "//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css", array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . "-LEAFLET", "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css", array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-LEAFLET", "https://unpkg.com/leaflet@1.0.3/dist/leaflet.css", array(), $this->version, 'all' );
 	}
 
 	/**
@@ -81,7 +81,7 @@ class xamoom_Public {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/xamoom-public.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name . "-LEAFLET", "http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js", array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . "-LEAFLET", "https://unpkg.com/leaflet@1.0.3/dist/leaflet.js", array( 'jquery' ), $this->version, false );
 	}
 
 	/**
