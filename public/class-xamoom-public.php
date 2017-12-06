@@ -397,7 +397,7 @@ class xamoom_Public {
 			break;
 
 		    default: // show unknow blocks
-				$html .= "<p style='color:#ff00ff;'>" . http_build_query($block) . "</p>";
+				$html .= ""; //"<p style='color:#ff00ff;'>" . http_build_query($block) . "</p>";
 		}
 
 		$html .= "</div>"; //finalize content block div
