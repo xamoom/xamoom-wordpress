@@ -131,8 +131,13 @@ class xamoom_Public {
 
 		//add custom css
 		$html = "<style type='text/css'>" . get_option('xamoom_custom_css') . "</style>";
+			session_start();
+			
+		$temp = $_SESSION['map_id']; // save Map IDs over pages 
+		if ($temp == "")
+				$_SESSION['map_id'] = 1;
 
-		$map_id = 1; //used to give seperate ids to seperate spotmaps
+		$map_id = $_SESSION['map_id']; //used to give seperate ids to seperate spotmaps
 
 		//render block HTML for each content block
 		for($i = 0; $i < count($content_blocks); $i++){
@@ -313,7 +318,8 @@ class xamoom_Public {
 
 		    case "9": //SPOTMAP
 			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_title'>" . $block['title'] . "</p>"; }
-			$this_map_id = "xamoom-map-" . $id . "-" . $map_id; //geet new map id that is unique on this page
+			$this_map_id = "xamoom-map-" . $id . "-" . $map_id; //get new map id that is unique on this page
+
 
 			//get spot map
 			$cursor = "";
@@ -394,6 +400,7 @@ class xamoom_Public {
 			$html .= "</script>"; //end script
 
 			$map_id++; //increment map_id
+			$_SESSION['map_id'] = $map_id; // Save current map id to session 
 			break;
 
 		    default: // show unknow blocks
