@@ -131,13 +131,8 @@ class xamoom_Public {
 
 		//add custom css
 		$html = "<style type='text/css'>" . get_option('xamoom_custom_css') . "</style>";
-			session_start();
-			
-		$temp = $_SESSION['map_id']; // save Map IDs over pages 
-		if ($temp == "")
-				$_SESSION['map_id'] = 1;
-
-		$map_id = $_SESSION['map_id']; //used to give seperate ids to seperate spotmaps
+		
+		$map_id = ($_SESSION['map_id'] == "" ? 1 : $_SESSION['map_id']); //used to give seperate ids to seperate spotmaps
 
 		//render block HTML for each content block
 		for($i = 0; $i < count($content_blocks); $i++){
