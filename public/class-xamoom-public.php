@@ -111,6 +111,7 @@ class xamoom_Public {
 		//seperate includes into blocks and style
 		$content_blocks = array();
 		$style = false;
+		$custom_map_marker = false;
 		for($i = 0; $i < count($content['included']); $i++){
 			$inc = $content['included'][$i];
 
@@ -120,14 +121,14 @@ class xamoom_Public {
 
 			if($inc['type'] == "styles"){
 				$style = $inc;
+
+				//extract custom marker if there is one
+				if(array_key_exists("map-pin",$style['attributes'])){
+					$custom_map_marker = $style['attributes']['map-pin'];
+				}
 			}
 		}
 
-		//extract custom marker if there is one
-		$custom_map_marker = false;
-		if(array_key_exists("map-pin",$style['attributes'])){
-			$custom_map_marker = $style['attributes']['map-pin'];
-		}
 
 		//add custom css
 		$html = "<style type='text/css'>" . get_option('xamoom_custom_css') . "</style>";
@@ -416,46 +417,45 @@ class xamoom_Public {
 	 */
 	public function call_api($method, $url, $data = false){
 	    $data_string = json_encode($data);
-	    $curl = curl_init();
-
+		$curl = curl_init();
 	    switch ($method)
 	    {
-	        case "POST":
-	          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-
-	          if ($data){
-	              curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-
-								curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-										'Content-Type: application/json',
-										'Content-Length: ' . strlen($data_string),
-										'ApiKey: ' . get_option('xamoom_api_key'))
-								);
-						}
-
-		        break;
-
-					case "GET":
-	          curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-
-						curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-								'ApiKey: ' . get_option('xamoom_api_key'))
-						);
-
-	          break;
-
+			case "POST":
+			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+			
+			if ($data){
+				curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+				
+				curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+					'Content-Type: application/json',
+					'Content-Length: ' . strlen($data_string),
+					'ApiKey: ' . get_option('xamoom_api_key'))
+				);
+			}
+			
+			break;
+			
+			case "GET":
+			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+			
+			curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+				'ApiKey: ' . get_option('xamoom_api_key'))
+			);
+			
+			break;
+			
 	        default:
-	          if ($data)
-	            $url = sprintf("%s?%s", $url, http_build_query($data));
+			if ($data)
+			$url = sprintf("%s?%s", $url, http_build_query($data));
 	    }
-
-
-
+		
+		
+		
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 	    curl_setopt($curl, CURLOPT_URL, $url);
-
-	    $result = curl_exec($curl);
-
+		curl_setopt($curl, CURLOPT_USERAGENT,'xamoom wordpress plugin');
+		
+		$result = curl_exec($curl);
 	    curl_close($curl);
 
 	    return $result;

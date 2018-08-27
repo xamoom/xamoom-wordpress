@@ -139,7 +139,7 @@ function xamoomLoadPages(params,append,cursor){
           jQuery("#xamoom-pages-list").append('\
                                               <tr class="' +  alternate + '">\
                                                   <td>\
-                                                      <p class="row-title">' + data['data'][i]['attributes']['name'] + '</p>\
+                                                      <p class="row-title">' + data['data'][i]['attributes']['display-name'] + '</p>\
                                                   </td>\
                                                   <td align="center" width="50">\
                                                       <select name="language" id="xamoom-page-language' + data['data'][i]['id'] + '">' + langs + '</select>\
