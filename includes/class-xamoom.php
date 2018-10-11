@@ -71,7 +71,7 @@ class xamoom {
 		$this->version = '1.4.3';
 		#$this->api_endpoint = 'https://xamoom-api-dot-xamoom-cloud.appspot.com/_ah/api/xamoomIntegrationApi/v1/';
 		#$this->api_endpoint = 'https://23-dot-xamoom-api-dot-xamoom-cloud-dev.appspot.com/_api/v2/integration/';
-		$this->api_endpoint = 'https://xamoom-cloud.appspot.com/_api/v2/integration/';
+		$this->api_endpoint = 'https://xamoom-217413.appspot.com/consumer/';
 		#$this->api_endpoint = 'https://xamoom-api-dot-xamoom-cloud.appspot.com/_api/v2/integration/';
 
 		$this->load_dependencies();
