@@ -425,11 +425,11 @@ class xamoom_Public {
 			
 			if ($data){
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-				
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array(
 					'Content-Type: application/json',
 					'Content-Length: ' . strlen($data_string),
-					'ApiKey: ' . get_option('xamoom_api_key'))
+					'ApiKey: ' . get_option('xamoom_api_key'),
+					'X-Reason: 2')
 				);
 			}
 			
@@ -437,9 +437,9 @@ class xamoom_Public {
 			
 			case "GET":
 			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-			
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-				'ApiKey: ' . get_option('xamoom_api_key'))
+				'ApiKey: ' . get_option('xamoom_api_key'),
+				'X-Reason: 2')
 			);
 			
 			break;
