@@ -196,10 +196,30 @@ class xamoom_Public {
 
 			if($link_url != null){ $html .= "<a href='" . $link_url . "' target='_blank'>"; }
 
-            if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
+            
 			if(array_key_exists("file-id",$block)){ $html .=  "<img class='xamoom_image' alt='". $alt_text . "' style='width:" . $scale . "%;' src='" . $block['file-id'] . "' />"; }
-            if(array_key_exists("copyright",$block) && $block['copyright'] != ""){ $html .=  "<p class='xamoom_copyright'>" . $block['copyright'] . "</p>"; }
+            		
+			if((array_key_exists("copyright",$block) && $block['copyright'] != "") || (array_key_exists("title",$block) && $block['title'] != "")){
+				$html .=  "<div class='clearfix' style='width:100%;'>";
 
+				$html .=  "<div style='float:left;'>";
+				if(array_key_exists("title",$block) && $block['title'] != ""){
+					$html .=  "<p style='margin:0px;' class='xamoom_caption'>" . $block['title'] . "</p>";
+				} else {
+					$html .=  "&nbsp;";
+				}
+				$html .=  "</div>";
+
+				$html .=  "<div style='float:right;'>";
+				if(array_key_exists("copyright",$block) && $block['copyright'] != ""){
+					$html .=  "<p class='xamoom_copyright'>" . $block['copyright'] . "</p>";
+				} else {
+					$html .=  "&nbsp;";
+				}
+				$html .=  "</div>";
+
+				$html .=  "</div>";
+			}
 
 			if($link_url != null){ $html .= "</a>"; }
 
