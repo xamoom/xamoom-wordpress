@@ -77,6 +77,7 @@ class xamoom {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
+		$this->define_block_hooks();
 		$this->define_public_hooks();
 		$this->define_register_settings();
 	}
@@ -108,6 +109,11 @@ class xamoom {
 		 * The class responsible for defining all actions that occur in the Dashboard.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-xamoom-admin.php';
+
+		/**
+		 * The class responsible for the gutenberg plugin.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'block/block.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -146,6 +152,18 @@ class xamoom {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_api_key_to_js' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_api_endpoint_to_js' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_i18n_strings_to_js' );
+	}
+
+	/**
+	 * Register all of the hooks related to the gutenberg block
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_block_hooks() {
+		$plugin_blocks = new xamoom_Block( $this->get_plugin_name(), $this->get_version(), $this->api_endpoint );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_blocks, 'enqueue_scripts' );
 	}
 
 	/**
