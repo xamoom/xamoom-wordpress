@@ -1,3 +1,21 @@
 /**
  * Nothing to see here.
  */
+
+.xamoom-page-search-box {
+    height: 28px;
+    margin-right: 5px;
+}
+
+#xamoom-search-list {
+    display: table;
+    width:100%;
+}
+
+#xamoom-load-more {
+    display:none;
+}
+
+#xamoom-selected-page-title {
+    padding-left: 5px;
+}
