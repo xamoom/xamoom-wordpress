@@ -102,20 +102,28 @@ class xamoom_Public {
 		//load shortcode attributes
 		extract( shortcode_atts( array('lang' => 'nolanginshortcode',), $atts ) );
 		extract( shortcode_atts( array('id' => 'noidinshortcode',), $atts ) );
-
-		//call backend apiu
+		//call backend api
 		$response = $this->call_api("GET",$this->api_endpoint . "contents/" . $id . "?lang=" . $lang);
-
 		$content = json_decode($response, true);
-
+		
 		//seperate includes into blocks and style
 		$content_blocks = array();
 		$style = false;
 		$custom_map_marker = false;
+		if($content['data']['relationships']['system']['data']['id']) {
+			$styles = $this->call_api("GET",$this->api_endpoint . "styles/" . $content['data']['relationships']['system']['data']['id']);
+
+							//extract custom marker if there is one
+							if(array_key_exists("map-pin",json_decode($styles, true)['data']['attributes'])){
+
+								$custom_map_marker = json_decode($styles, true)['data']['attributes']['map-pin'];
+							}
+		}
 		for($i = 0; $i < count($content['included']); $i++){
 			$inc = $content['included'][$i];
 
-			if($inc['type'] == "contentblocks"){
+		
+		if($inc['type'] == "contentblocks"){
 				array_push($content_blocks,$inc);
 			}
 
@@ -124,6 +132,7 @@ class xamoom_Public {
 
 				//extract custom marker if there is one
 				if(array_key_exists("map-pin",$style['attributes'])){
+
 					$custom_map_marker = $style['attributes']['map-pin'];
 				}
 			}
