@@ -368,7 +368,7 @@ class xamoom_Public {
 									var map = L.map('" . $this_map_id . "').setView([0,0], 13);\n
 
 									// add OpenStreetMap tile layer
-									L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', { attribution: '&copy; <a href=\"http://leafletjs.com\" title=\"A JS library for interactive maps\">Leaflet</a> | Tiles courtesy of <a href=\"http://hot.openstreetmap.se/\" target=\"_blank\">OpenStreetMap Sweden</a> — Map data © <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>'}).addTo(map);\n
+									L.tileLayer('https://api.mapbox.com/styles/v1/xamoom-bruno/cjrsxsgro27zg2tqlugotf18v/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoieGFtb29tLWJydW5vIiwiYSI6ImNqcmc1MWxqbTFsNms0Nm1yZGcycTFqbjAifQ.sDuEiFnBOHNoS-o7uTHvdA').addTo(map);\n
 
 									var bounds = [];\n";
 
