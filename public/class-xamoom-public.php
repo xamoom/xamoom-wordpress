@@ -409,6 +409,7 @@ class xamoom_Public {
 			//finalze JavaScript function to render map block
 			$html .= "map.fitBounds(bounds);\n
 				  //map.zoomOut();\n
+				  map.scrollWheelZoom.disable();\n
 				}";
 
 			//start map rendering in JS
