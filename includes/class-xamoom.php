@@ -151,6 +151,7 @@ class xamoom {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_settings_page' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_api_key_to_js' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_api_endpoint_to_js' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_plugin_dir_to_js' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'publish_i18n_strings_to_js' );
 	}
 

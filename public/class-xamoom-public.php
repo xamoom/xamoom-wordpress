@@ -70,8 +70,8 @@ class xamoom_Public {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/xamoom-public.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . "-FONTAWESOME", "//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css", array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . "-LEAFLET", "https://unpkg.com/leaflet@1.0.3/dist/leaflet.css", array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOME", plugin_dir_url( __FILE__ ) . 'css/font-awesome.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-LEAFLET", plugins_url('leaflet/leaflet.css', __FILE__), array(), $this->version, 'all' );
 	}
 
 	/**
@@ -81,7 +81,7 @@ class xamoom_Public {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/xamoom-public.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( $this->plugin_name . "-LEAFLET", "https://unpkg.com/leaflet@1.0.3/dist/leaflet.js", array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . "-LEAFLET", plugins_url('leaflet/leaflet.js', __FILE__), array( 'jquery' ), $this->version, false );
 	}
 
 	/**
@@ -103,15 +103,14 @@ class xamoom_Public {
 		extract( shortcode_atts( array('lang' => 'nolanginshortcode',), $atts ) );
 		extract( shortcode_atts( array('id' => 'noidinshortcode',), $atts ) );
 		//call backend api
-		$response = $this->call_api("GET",$this->api_endpoint . "contents/" . $id . "?lang=" . $lang);
+		$response = $this->call_api($this->api_endpoint . "contents/" . $id . "?lang=" . $lang);
 		$content = json_decode($response, true);
-		
 		//seperate includes into blocks and style
 		$content_blocks = array();
 		$style = false;
 		$custom_map_marker = false;
 		if($content['data']['relationships']['system']['data']['id']) {
-			$styles = $this->call_api("GET",$this->api_endpoint . "styles/" . $content['data']['relationships']['system']['data']['id']);
+			$styles = $this->call_api($this->api_endpoint . "styles/" . $content['data']['relationships']['system']['data']['id']);
 
 							//extract custom marker if there is one
 							if(array_key_exists("map-pin",json_decode($styles, true)['data']['attributes'])){
@@ -351,7 +350,7 @@ class xamoom_Public {
 			$has_more = true;
 			$spot_map = array('items' => array());
 			while($has_more){
-				$spot_map_response = $this->call_api("GET",$this->api_endpoint . "spots?filter[tags]=[\"" . implode("\",\"", $block['spot-map-tags']) . "\"]&page[cursor]=" . $cursor . "&filter[has-location]=true&&page[size]=100&lang=" . $lang);
+				$spot_map_response = $this->call_api($this->api_endpoint . "spots?filter[tags]=[\"" . implode("\",\"", $block['spot-map-tags']) . "\"]&page[cursor]=" . $cursor . "&filter[has-location]=true&&page[size]=100&lang=" . $lang);
 				$resp = json_decode($spot_map_response, true);
 				$spot_map['items'] = array_merge($spot_map['items'], $resp['data']);
 
@@ -445,50 +444,9 @@ class xamoom_Public {
 	 *
 	 * @since    1.0.0
 	 */
-	public function call_api($method, $url, $data = false){
-	    $data_string = json_encode($data);
-		$curl = curl_init();
-	    switch ($method)
-	    {
-			case "POST":
-			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-			
-			if ($data){
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-				curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-					'Content-Type: application/json',
-					'Content-Length: ' . strlen($data_string),
-					'ApiKey: ' . get_option('xamoom_api_key'),
-					'X-Reason: 2')
-				);
-			}
-			
-			break;
-			
-			case "GET":
-			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-			curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-				'ApiKey: ' . get_option('xamoom_api_key'),
-				'X-Reason: 2')
-			);
-			
-			break;
-			
-	        default:
-			if ($data)
-			$url = sprintf("%s?%s", $url, http_build_query($data));
-	    }
-		
-		
-		
-	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	    curl_setopt($curl, CURLOPT_URL, $url);
-		curl_setopt($curl, CURLOPT_USERAGENT,'xamoom wordpress plugin');
-		
-		$result = curl_exec($curl);
-	    curl_close($curl);
-
-	    return $result;
+	public function call_api($url){
+		$result = wp_remote_get( $url ,	array('headers' => array( 'ApiKey' => get_option('xamoom_api_key'), 'X-Reason' => 2, 'user-agent' => 'xamoom wordpress plugin' ) ));
+		return wp_remote_retrieve_body($result);
 	}
 
 }

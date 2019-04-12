@@ -110,6 +110,16 @@ class xamoom_Admin {
 		print "<script type='text/javascript'>var xamoom_api_endpoint = '" . $this->api_endpoint . "';</script>";
 	}
 
+
+	/**
+	 * Publish the API Endpoint URL as a javascript var. (Admin Backend Only)
+	 *
+	 * @since    1.0.0
+	 */
+	public function publish_plugin_dir_to_js() {
+		print "<script type='text/javascript'>var pluginDir = '" . plugin_dir_url( __FILE__ ) . "';</script>";
+	}
+
 	/**
 	 * Publish the API Endpoint URL as a javascript var. (Admin Backend Only)
 	 *

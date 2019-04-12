@@ -28,7 +28,8 @@ function xamoom_addTinymceButtonFilter() {
 }
 
 function  xamoom_addTinymceButtonJs( $plugin_array ) {
-    $plugin_array['xamoom'] = plugins_url() .  '/wp-xamoom/tiny-mce-plugin/xamoom-tiny-mce.js';
+    // $plugin_array['xamoom'] = plugins_url('tiny-mce-plugin/xamoom-tiny-mce.js', __FILE__);
+    $plugin_array['xamoom'] = plugins_url('/xamoom-tiny-mce.js', __FILE__);
     return $plugin_array;
 }
 

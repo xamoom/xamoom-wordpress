@@ -172,7 +172,7 @@ function xamoomLoadPages(params,append,cursor){
         ed.addButton('xamoom-insert-content', {
             title : 'xamoom',
             cmd : 'insert-xamoom-shortcode',
-            image : 'https://storage.googleapis.com/xamoom-public-resources/icon.png',
+            image : pluginDir + '../public/images/icon.png',
         });
 
         //register click command
