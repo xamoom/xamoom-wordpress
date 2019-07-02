@@ -72,6 +72,9 @@ class xamoom_Public {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/xamoom-public.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . "-FONTAWESOME", plugin_dir_url( __FILE__ ) . 'css/font-awesome.min.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . "-LEAFLET", plugins_url('leaflet/leaflet.css', __FILE__), array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-OWL", plugins_url('owl-carousel/assets/owl.carousel.min.css', __FILE__), array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-OWL2", plugins_url('owl-carousel/assets/owl.theme.default.min.css', __FILE__), array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-OWL3", plugins_url('owl-carousel/assets/ajax-loader.gif', __FILE__), array(), $this->version, 'all' );
 	}
 
 	/**
@@ -82,6 +85,7 @@ class xamoom_Public {
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/xamoom-public.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . "-LEAFLET", plugins_url('leaflet/leaflet.js', __FILE__), array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . "-OWL", plugins_url('owl-carousel/owl.carousel.min.js', __FILE__), array( 'jquery' ), $this->version, false );
 	}
 
 	/**
@@ -141,7 +145,6 @@ class xamoom_Public {
 		//add custom css
 		$html = "<style type='text/css'>" . get_option('xamoom_custom_css') . "</style>";
 		
-		$map_id = (isset($_SESSION['map_id']) ? $_SESSION['map_id'] : 1 ); //used to give seperate ids to seperate spotmaps
 
 		//render block HTML for each content block
 		for($i = 0; $i < count($content_blocks); $i++){
@@ -150,7 +153,19 @@ class xamoom_Public {
 
 			$html .= "<div class='xamoom_block'>"; //initializes content block div container
 
-		switch ($block_type) {
+
+			$html = $this->generate_blocks_html($block, $block_type, $html, $lang, $id, $custom_map_marker);
+		$html .= "</div>"; //finalize content block div
+
+	  }
+
+	    return $html;
+	}
+
+	public function generate_blocks_html($block, $block_type, $html, $lang, $id, $custom_map_marker) {
+		$map_id = (isset($_SESSION['map_id']) ? $_SESSION['map_id'] : 1 ); //used to give seperate ids to seperate spotmaps
+
+		switch ($block_type) { 
 		    case "0": //TEXT
 			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
 			if(array_key_exists("text",$block)){ $html .=  "<p>" . $block['text'] . "</p>"; }
@@ -164,13 +179,15 @@ class xamoom_Public {
 			}
 			break;
 
-		    case "2": //VIDEO
+			case "2": //VIDEO
+			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
+
 				if (strpos($block['video-url'],'vimeo.com') == true) { //vimeo video
 					$urlSegments = explode('/', $block['video-url']);
 					$vimeoVideoID =  $urlSegments[sizeof($urlSegments)-1];
 						$html .= "<div class='xamoom-videoWrapper'>";
-						$html .= '<iframe src="//player.vimeo.com/video/'. $vimeoVideoID .'" width="560" height="349" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
-						.'</iframe>';
+						$html .= '<iframe src="//player.vimeo.com/video/'. $vimeoVideoID .'" width="100%" height="auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>' .'</iframe>';
+						$html .= "<div class='swipe-overlay1'></div>" . "<div class='swipe-overlay2'></div>" . "<div class='swipe-overlay3'></div>";
 						$html .= "</div>";
 					
 						
@@ -186,10 +203,12 @@ class xamoom_Public {
 				$youtube_id = $query_vars['v'];
 
 				$html .= "<div class='xamoom-videoWrapper'>" .
-							"<iframe width='560' height='349' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
+							"<iframe width='100%' height='auto' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
+								"<div class='swipe-overlay1'></div>" .
+								"<div class='swipe-overlay2'></div>" .
+								"<div class='swipe-overlay3'></div>" .
 								 "</div>";
 			}
-			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
 			break;
 
 		    case "3": //IMAGE
@@ -205,7 +224,7 @@ class xamoom_Public {
 			if($link_url != null){ $html .= "<a href='" . $link_url . "' target='_blank'>"; }
 
             
-			if(array_key_exists("file-id",$block)){ $html .=  "<img class='xamoom_image' alt='". $alt_text . "' style='width:" . $scale . "%;' src='" . $block['file-id'] . "' />"; }
+			if(array_key_exists("file-id",$block)){ $html .=  "<img class='xamoom_image owl-lazy' alt='". $alt_text . "' style='width:" . $scale . "%;' src='" . $block['file-id'] . "' />"; }
             		
 			if((array_key_exists("copyright",$block) && $block['copyright'] != "") || (array_key_exists("title",$block) && $block['title'] != "")){
 				$html .=  "<div class='clearfix' style='width:100%;'>";
@@ -383,7 +402,7 @@ class xamoom_Public {
 			//render marker script
 			for($j = 0; $j < count($spot_map['items']); $j++){
 			    $marker = $spot_map['items'][$j]['attributes'];
-
+ 
 			    //kill line breaks from marker descriptions and display_name
 			    $marker['description'] = str_replace(array("\r", "\n"), "<br>", $marker['description']);
 			    $marker['name'] = str_replace(array("\r", "\n"), "<br>", $marker['name']);
@@ -428,17 +447,51 @@ class xamoom_Public {
 			$_SESSION['map_id'] = $map_id; // Save current map id to session 
 			break;
 
+			case "12":
+
+			//call backend api
+			$res = $this->call_api($this->api_endpoint . "contents/" . $block['content-id'] . "?lang=" . $lang);
+			$gallery = json_decode($res, true);
+			//seperate includes into blocks and style
+			$gallery_items = array();
+
+			for($i = 0; $i < count($gallery['included']); $i++){
+				$inc = $gallery['included'][$i];
+	
+			
+			if($inc['type'] == "contentblocks" && in_array($inc['attributes']['block-type'], array(0,1,2,3), true) ) {
+					array_push($gallery_items,$inc);
+				}
+
+			}
+			$html .= "<div class='gallery-container'>";
+			$html .= "<div class='owl-carousel owl-theme'>";
+			foreach ($gallery_items as $block) {
+			$html .= "<div class='gallery-block-item' id='gallery-block-item-". $block['attributes']['block-type']. "'>";
+			$html .= $this->generate_blocks_html($block['attributes'], $block['attributes']['block-type'], '', NULL, NULL, NULL);
+			$html .= "</div>";
+			}
+			$html .= "</div></div>";
+			// $html .= "<pre>". print_r($gallery_items[2]['attributes']['block-type']) ."</pre>";
+			$html .= "<style>
+			
+			</style>";
+			$html .= "<script>jQuery('.owl-carousel').owlCarousel({
+				loop:true,
+				items:1,
+				nav:true,
+				lazyLoad:true,
+				dots:true,
+				navText: ['<i class=\"carousel-nav-icons fa fa-chevron-left\"></i>', '<i class=\"carousel-nav-icons fa fa-chevron-right\"></i>'],
+				autoHeight: true,
+				autoHeightClass: 'owl-height'
+			})</script>";
+			break;
 		    default: // show unknow blocks
 				$html .= ""; //"<p style='color:#ff00ff;'>" . http_build_query($block) . "</p>";
 		}
-
-		$html .= "</div>"; //finalize content block div
-
-	  }
-
-	    return $html;
+	return $html;
 	}
-
 	/**
 	 * Calls the backend API
 	 *
