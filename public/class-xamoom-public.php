@@ -318,14 +318,19 @@ class xamoom_Public {
 		    case "5": //EBOOK
 			$ebook_url = "";
 			if(array_key_exists("file-id",$block)){ $ebook_url = $block['file-id']; }
+			$html .= '<a href="' . $ebook_url . '" class="download-block ebook button-background" >';
+			$html .= '<div class="download-block-icon">';
+			$html .= '<i class="button-icon fa fa-book"></i>';
+			$html .= '</div>';
 
+			$html .= '<div class="download-block-content">';
 			if(array_key_exists("title",$block)){
-				$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>" . $block['title'] . "</a></p>";
-			} else {
-				$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
+				$html .= '<h4 class="button-text">' . $block['title'] . '</h4>';
 			}
 
-			if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
+			if(array_key_exists("artists",$block)){ $html .=  "<p class='button-text'>" . $block['artists'] . "</p>"; }
+			$html .= '</div>';			
+			$html .= '</a>';
 			break;
 
 		    case "6": //CONTENT BLOCK CONTENT GET'S IGNORED, BECAUSE IT MAKES NO SENSE TO LINK TO XAMOOM CONTENT PAGES
@@ -344,10 +349,10 @@ class xamoom_Public {
 			if(array_key_exists("title",$block)){ $download_title = $block['title']; }
 			if(array_key_exists("file-id",$block)){ $download_url = $block['file-id']; }
 			if(array_key_exists("download-type",$block)){ $download_type = $block['download-type']; }
-
+			
 			$icon = "fa-user-plus";
 			switch ($download_type) {
-			    case "0": //VCF
+				case "0": //VCF
 				$icon = "fa-user-plus";
 				break;
 			    case "1": //ICAL
@@ -355,8 +360,34 @@ class xamoom_Public {
 				break;
 			}
 
-			$html .= "<p class='xamoom_link'><i class='fa " . $icon . "'></i> <a href='" . $download_url . "'>" . $download_title . "</a></p>";
-			if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
+			$css_class = "";
+			switch ($download_type) {
+				case "0": //VCF
+				$css_class = "vcf";
+				break;
+			    case "1": //ICAL
+				$css_class = "ical";
+				break;
+			    case "2": //gpx
+				$css_class = "gpx";
+				break;
+			}
+
+			$html .= '<a href="' . $download_url . '" class="download-block ' . $css_class .' button-background" >';
+			$html .= '<div class="download-block-icon">';
+			if($download_type == "2") { // GPX
+				$html .= '<div class="button-icon gpx-icon"></div> ';			
+			} else {
+				$html .= '<i class="button-icon fa '. $icon .'"></i>';
+			}
+			$html .= '</div>';
+
+			$html .= '<div class="download-block-content">';
+			$html .= '<h4 class="button-text">' . $download_title . '</h4>';
+			if(array_key_exists("text",$block)){ $html .= '<p class="button-text">' . $block['text'] . '</p>'; }
+			$html .= '</div>';			
+			$html .= '</a>';
+
 			break;
 
 		    case "9": //SPOTMAP
