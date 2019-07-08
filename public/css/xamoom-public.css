@@ -202,3 +202,5 @@ button.owl-dot.active > span {
         transform: translateY(-10px)
     }
   }
+  .owl-carousel .owl-item .owl-lazy {
+  opacity: 1 !important; }

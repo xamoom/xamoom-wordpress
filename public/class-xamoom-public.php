@@ -472,7 +472,6 @@ class xamoom_Public {
 			$html .= "</div>";
 			}
 			$html .= "</div></div>";
-			// $html .= "<pre>". print_r($gallery_items[2]['attributes']['block-type']) ."</pre>";
 			$html .= "<style>
 			
 			</style>";
