@@ -343,7 +343,8 @@ class xamoom_Public {
 				    "</iframe>";
 			break;
 
-		    case "8": //DOWNLOAD$download_title = "";
+			case "8": //DOWNLOAD
+			$download_title = "";
 			$download_url = "";
 			$download_type = "0";
 			if(array_key_exists("title",$block)){ $download_title = $block['title']; }
