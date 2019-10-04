@@ -318,19 +318,12 @@ class xamoom_Public {
 		    case "5": //EBOOK
 			$ebook_url = "";
 			if(array_key_exists("file-id",$block)){ $ebook_url = $block['file-id']; }
-			$html .= '<a href="' . $ebook_url . '" class="download-block ebook button-background" >';
-			$html .= '<div class="download-block-icon">';
-			$html .= '<i class="button-icon fa fa-book"></i>';
-			$html .= '</div>';
-
-			$html .= '<div class="download-block-content">';
 			if(array_key_exists("title",$block)){
-				$html .= '<h4 class="button-text">' . $block['title'] . '</h4>';
+				$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>" . $block['title'] . "</a></p>";
+			} else {
+				$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
 			}
-
-			if(array_key_exists("artists",$block)){ $html .=  "<p class='button-text'>" . $block['artists'] . "</p>"; }
-			$html .= '</div>';			
-			$html .= '</a>';
+			if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
 			break;
 
 		    case "6": //CONTENT BLOCK CONTENT GET'S IGNORED, BECAUSE IT MAKES NO SENSE TO LINK TO XAMOOM CONTENT PAGES
@@ -374,21 +367,30 @@ class xamoom_Public {
 				break;
 			}
 
-			$html .= '<a href="' . $download_url . '" class="download-block ' . $css_class .' button-background" >';
-			$html .= '<div class="download-block-icon">';
+			// $html .= '<a href="' . $download_url . '" class="download-block ' . $css_class .' button-background" >';
+			// $html .= '<div class="download-block-icon">';
+			// if($download_type == "2") { // GPX
+			// 	$html .= '<div class="button-icon gpx-icon"></div> ';			
+			// } else {
+			// 	$html .= '<i class="button-icon fa '. $icon .'"></i>';
+			// }
+			// $html .= '</div>';
+
+			// $html .= '<div class="download-block-content">';
+			// $html .= '<h4 class="button-text">' . $download_title . '</h4>';
+			// if(array_key_exists("text",$block)){ $html .= '<p class="button-text">' . $block['text'] . '</p>'; }
+			// $html .= '</div>';			
+			// $html .= '</a>';
+
+			$html .= "<p class='xamoom_link'>";
 			if($download_type == "2") { // GPX
 				$html .= '<div class="button-icon gpx-icon"></div> ';			
 			} else {
-				$html .= '<i class="button-icon fa '. $icon .'"></i>';
+				$html = "<i class='fa " . $icon . "'></i>";
 			}
-			$html .= '</div>';
-
-			$html .= '<div class="download-block-content">';
-			$html .= '<h4 class="button-text">' . $download_title . '</h4>';
-			if(array_key_exists("text",$block)){ $html .= '<p class="button-text">' . $block['text'] . '</p>'; }
-			$html .= '</div>';			
-			$html .= '</a>';
-
+			
+			$html = "<a href='" . $download_url . "'>" . $download_title . "</a></p>";
+			if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
 			break;
 
 		    case "9": //SPOTMAP
