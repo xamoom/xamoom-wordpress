@@ -206,12 +206,9 @@ button.owl-dot.active > span {
   opacity: 1 !important; }
 
 .gpx-icon {
-    background-color: #FFF;
-    -webkit-mask-image: url(../images/gpx-web-mobileweb.svg);
-    mask-image: url(../images/gpx-web-mobileweb.svg);
-    /* background-image: url(../images/gpx-web-mobileweb.svg); */
+    background-image: url(data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJtYXAtc2lnbnMiIGNsYXNzPSJzdmctaW5saW5lLS1mYSBmYS1tYXAtc2lnbnMgZmEtdy0xNiIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik01MDcuMzEgODQuNjlMNDY0IDQxLjM3Yy02LTYtMTQuMTQtOS4zNy0yMi42My05LjM3SDI4OFYxNmMwLTguODQtNy4xNi0xNi0xNi0xNmgtMzJjLTguODQgMC0xNiA3LjE2LTE2IDE2djE2SDU2Yy0xMy4yNSAwLTI0IDEwLjc1LTI0IDI0djgwYzAgMTMuMjUgMTAuNzUgMjQgMjQgMjRoMzg1LjM3YzguNDkgMCAxNi42Mi0zLjM3IDIyLjYzLTkuMzdsNDMuMzEtNDMuMzFjNi4yNS02LjI2IDYuMjUtMTYuMzggMC0yMi42M3pNMjI0IDQ5NmMwIDguODQgNy4xNiAxNiAxNiAxNmgzMmM4Ljg0IDAgMTYtNy4xNiAxNi0xNlYzODRoLTY0djExMnptMjMyLTI3MkgyODh2LTMyaC02NHYzMkg3MC42M2MtOC40OSAwLTE2LjYyIDMuMzctMjIuNjMgOS4zN0w0LjY5IDI3Ni42OWMtNi4yNSA2LjI1LTYuMjUgMTYuMzggMCAyMi42M0w0OCAzNDIuNjNjNiA2IDE0LjE0IDkuMzcgMjIuNjMgOS4zN0g0NTZjMTMuMjUgMCAyNC0xMC43NSAyNC0yNHYtODBjMC0xMy4yNS0xMC43NS0yNC0yNC0yNHoiPjwvcGF0aD48L3N2Zz4=);
     display: inline-block;
     vertical-align: middle;
-    width: 3em;
-    height: 3em;
+    width: 20px;
+    height: 20px;
 }
