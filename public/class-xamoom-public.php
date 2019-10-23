@@ -113,7 +113,17 @@ class xamoom_Public {
 		$content_blocks = array();
 		$style = false;
 		$custom_map_marker = false;
-		if($content['data']['relationships']['system']['data']['id']) {
+
+		// HANDLE ERROR
+		if(array_key_exists('errors', $content) && $content['errors']) {
+			$errCode = $content['errors'][0]['code'];
+			if ($errCode == 92 || $errCode == 93) { // password protected or spot only
+				$html = '<div class="not-available-content"><i class="fa fa-lock"></i><span>This content is password protected<span></div>';
+				return $html;
+			}
+		}
+
+		if(array_key_exists('data', $content) && $content['data']['relationships']['system']['data']['id']) {
 			$styles = $this->call_api($this->api_endpoint . "styles/" . $content['data']['relationships']['system']['data']['id']);
 
 							//extract custom marker if there is one
