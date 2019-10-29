@@ -120,6 +120,8 @@ class xamoom_Public {
 			if ($errCode == 92 || $errCode == 93) { // password protected or spot only
 				$html = '<div class="not-available-content"><i class="fa fa-lock"></i><span>This content is password protected<span></div>';
 				return $html;
+			} else { // any other error
+				return '';
 			}
 		}
 
@@ -410,13 +412,17 @@ class xamoom_Public {
 
 			//get spot map
 			$cursor = "";
+			$total_num_results = 0;
 			$has_more = true;
 			$spot_map = array('items' => array());
 			while($has_more){
-				$spot_map_response = $this->call_api($this->api_endpoint . "spots?filter[tags]=[\"" . implode("\",\"", $block['spot-map-tags']) . "\"]&page[cursor]=" . $cursor . "&filter[has-location]=true&&page[size]=100&lang=" . $lang);
+				$api = $this->encodeURI($this->api_endpoint . "spots?filter[tags]=[\"" . implode("\",\"", $block['spot-map-tags']) . "\"]&page[cursor]=" . $cursor . "&filter[has-location]=true&page[size]=100&lang=" . $lang);
+				$spot_map_response = $this->call_api($api);
 				$resp = json_decode($spot_map_response, true);
-				$spot_map['items'] = array_merge($spot_map['items'], $resp['data']);
-
+				if ($resp['data']) {
+					$spot_map['items'] = array_merge($spot_map['items'], $resp['data']);
+				}
+				$total_num_results = $resp['meta']['total'];
 				$cursor = $resp['meta']['cursor'];
 				$has_more = $resp['meta']['has-more'];
 			}
@@ -444,7 +450,7 @@ class xamoom_Public {
 			}
 
 			//render marker script
-			for($j = 0; $j < count($spot_map['items']); $j++){
+			for($j = 0; $j < $total_num_results; $j++){
 			    $marker = $spot_map['items'][$j]['attributes'];
  
 			    //kill line breaks from marker descriptions and display_name
@@ -541,8 +547,19 @@ class xamoom_Public {
 	 * @since    1.0.0
 	 */
 	public function call_api($url){
+		$header = array('headers' => array( 'ApiKey' => get_option('xamoom_api_key'), 'X-Reason' => 2, 'user-agent' => 'xamoom wordpress plugin' ));
 		$result = wp_remote_get( $url ,	array('headers' => array( 'ApiKey' => get_option('xamoom_api_key'), 'X-Reason' => 2, 'user-agent' => 'xamoom wordpress plugin' ) ));
 		return wp_remote_retrieve_body($result);
 	}
+
+	/**
+	 * encodes special characters in uri
+	 */
+	public function encodeURI($uri)
+{
+    return preg_replace_callback("{[^0-9a-z_.!~*'();,/?:@&=+$#-]}i", function ($m) {
+        return sprintf('%%%02X', ord($m[0]));
+    }, $uri);
+}
 
 }
