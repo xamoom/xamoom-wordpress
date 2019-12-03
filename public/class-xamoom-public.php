@@ -402,7 +402,7 @@ class xamoom_Public {
 			}
 			
 			$html = "<a href='" . $download_url . "'>" . $download_title . "</a></p>";
-			if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
+			if(array_key_exists("text",$block)){ $html.=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
 			break;
 
 		    case "9": //SPOTMAP
@@ -426,10 +426,88 @@ class xamoom_Public {
 				$cursor = $resp['meta']['cursor'];
 				$has_more = $resp['meta']['has-more'];
 			}
-
 			//render map
-			$html .= "<div class='xamoom-map' id='" . $this_map_id . "'></div>";
-
+			$html .= "<div class='xamoom-map' id='" . $this_map_id . "'><div class='spotmap-popup'></div><button class=\"expand\"><i class=\"fa fa-expand\"></i></button></div>";
+			$html .= "<script language='JavaScript'>  function createNewPopup" . $map_id . "(spot, marker, map) { \n
+				const self = this;\n
+				marker.addTo(map); \n
+					marker.getElement().addEventListener('click', function(e) {\n
+						document.querySelectorAll('#" . $this_map_id . " .leaflet-marker-icon').forEach((el) => {\n
+							el.style.opacity = 0.5;\n
+						});\n
+						// clicked marker opacity 1 \n
+						marker.getElement().style.opacity = 1;\n
+						\n
+						// center marker with padding\n
+						const latlng = marker.getLatLng();\n
+						const bounds = latlng.toBounds(250); // 250 = meter\n
+						map.panTo(latlng).fitBounds(bounds, {\n
+							paddingBottomRight: [0, 150],\n
+						});\n
+						document.querySelector('#" . $this_map_id . " > .spotmap-popup').innerHTML = self.createInfoWindowPopup(spot);\n
+						\n
+						// show popup\n
+						self.jQuery('#" . $this_map_id . " > .spotmap-popup').animate({\n
+							bottom: 0,\n
+						}, 300);\n
+						\n
+						e.stopPropagation();\n
+				});\n
+				};\n
+				function hidePopup" . $map_id . "() { \n
+					this.jQuery('#" . $this_map_id . " > .spotmap-popup').animate({ \n
+					  bottom: '-50%', \n
+					}, 300); \n
+					document.querySelectorAll('#" . $this_map_id . " .leaflet-marker-icon').forEach((el) => { \n
+					  el.style.opacity = 1; \n
+				   }); \n
+				  }; \n
+				function createInfoWindowPopup(spot) {  \n
+				  let imageSection = '';  \n
+				  let spotNameSection = '';  \n
+					  let descriptionSection = '';  \n
+					  let openSection = '';  \n
+					  ({ imageSection, spotNameSection, descriptionSection } = this._generateSections(spot.image_url, spot.display_name, spot.description));  \n
+					  \n
+					  const navLinkSection =  \n
+					    `<a class=\"link\" href=\"https://maps.google.com/maps?z=12&t=m&q=\${spot.location.lat},\${spot.location.lon}\">Route</a>`;  \n
+					  \n
+					  const htmlRes = this._concatenateInfoWindowSections(  \n
+					    imageSection,  \n
+					    spotNameSection,  \n
+					    descriptionSection,  \n
+					    navLinkSection,  \n
+					    openSection,  \n
+					  );  \n
+					  return htmlRes;  \n
+					};  \n
+					  function _generateSections(image, name, description) {  \n
+					      let imageSection = '<div></div>';  \n
+					      let descriptionSection = '<p class=\"description\"></p>';  \n
+						\n
+					      if (image) {  \n
+					        imageSection = `<img src=\"\${image}\"/>`;  \n
+					      }  \n
+					    \n
+					      const spotNameSection = `<h2>\${name}</h2>`;  \n
+					      if (description) {  \n
+					        descriptionSection = `<p class=\"description\">\${description}</p>`;  \n
+					      }  \n
+					    \n
+					      return { imageSection, spotNameSection, descriptionSection };  \n
+					  };  \n
+					   function _concatenateInfoWindowSections(  \n
+					    imageSection,  \n
+					    spotNameSection,  \n
+					    descriptionSection,  \n
+					    navLinkSection,  \n
+					    openSection,  \n
+					  ) {  \n
+					    return `\${spotNameSection}<div class=\"image-part\">\${imageSection}</div>\${descriptionSection}<div class=\"spotmap-buttons\">  \n
+					    \${navLinkSection}  \n
+					    \${openSection}  \n
+					    </div>`;  \n
+					};</script>";
 			//initialize script
 			$html .= "<script language='JavaScript'>\n
 						function renderMap_" . $map_id . "(width,height){\n
@@ -437,7 +515,11 @@ class xamoom_Public {
 
 									// add OpenStreetMap tile layer
 									L.tileLayer('https://api.mapbox.com/styles/v1/xamoom-bruno/cjtjxdlkr3gr11fo5e72d5ndg/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoieGFtb29tLWJydW5vIiwiYSI6ImNqcmc1MWxqbTFsNms0Nm1yZGcycTFqbjAifQ.sDuEiFnBOHNoS-o7uTHvdA', { attribution: '<a href=\"https://xamoom.com\" target=\"_blank\" title=\"xamoom mobile platform\">xamoom</a>' }).addTo(map);\n
-
+									const self = this; \n
+										map.on('click', function() { \n
+											self.hidePopup" . $map_id . "(); \n
+									}); \n
+								
 									var bounds = [];\n";
 
 			//if there is a custom marker, set it up.
@@ -448,38 +530,50 @@ class xamoom_Public {
 			    $html .= "\nvar LeafIcon = L.Icon.extend({options: {iconSize:[new_width, new_height],iconAnchor:[new_height / 2, new_height - 1],popupAnchor:  [0, -new_height]}}); ";
 			    $html .= "\nvar custom_marker = new LeafIcon({iconUrl: '" . $custom_map_marker ."'});";
 			}
-
 			//render marker script
 			for($j = 0; $j < $total_num_results; $j++){
 			    $marker = $spot_map['items'][$j]['attributes'];
- 
-			    //kill line breaks from marker descriptions and display_name
-			    $marker['description'] = str_replace(array("\r", "\n"), "<br>", $marker['description']);
+				//kill line breaks from marker descriptions and display_name
+				if(array_key_exists("description",$marker)) {
+					$marker['description'] = str_replace(array("\r", "\n"), "<br>", $marker['description']);
+					$marker['description'] = str_replace(array('"'), '\"', $marker['description']);
+					$marker['description'] = str_replace(array('`'), '\`', $marker['description']);
+					$marker['description'] = str_replace(array("'"), "\'", $marker['description']);
+				}
+
+				if(array_key_exists("name",$marker)) {
+
 			    $marker['name'] = str_replace(array("\r", "\n"), "<br>", $marker['name']);
+				$marker['name'] = str_replace(array('"'), '\"', $marker['name']);
 
-			    $marker['description'] = str_replace(array('"'), '\"', $marker['description']);
-			    $marker['name'] = str_replace(array("'"), "\'", $marker['name']);
-
+					$marker['name'] = str_replace(array("'"), "\'", $marker['name']);
+					$marker['name'] = str_replace(array("`"), "\`", $marker['name']);
+				}
 			    //extract image
-			    $image = "";
-			    if(array_key_exists("image",$marker)){ $image =  "<img style=\"width:100%;\" src=\"" . $marker['image'] . "\" /><br />"; }
+			    $image = null;
+			    if(array_key_exists("image",$marker)){ $image = $marker['image']; }
 
 			    // add a markers
 			    if($custom_map_marker){
-						$html .= "\nL.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "],{icon: custom_marker}).addTo(map).bindPopup('<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "');";
+						$html .= "\n this.createNewPopup" . $map_id . "({'image_url': '" . $image . "', 'display_name': '" . $marker['name'] . "', description: '" . $marker['description'] . "', location : { lat : " . $marker['location']['lat'] . ", lon: " . $marker['location']['lon'] . " }}, L.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "],{icon: custom_marker}), map )";
 			    } else {
-						$html .= "\nL.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "]).addTo(map).bindPopup('<b>" . $marker['name'] . "</b><br>" . $image . $marker['description'] . "');";
+						$html .= "\n this.createNewPopup" . $map_id . "({'image_url': '" . $image . "', 'display_name': '" . $marker['name'] . "', description: '" . $marker['description'] . "', location : { lat : " . $marker['location']['lat'] . ", lon: " . $marker['location']['lon'] . " }}, L.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "]), map );";
 			    }
 
 			    $html .= "\nbounds.push([" . $marker['location']['lat'] . "," . $marker['location']['lon'] . "]);";
 			}
-
+		
 			//finalze JavaScript function to render map block
 			$html .= "map.fitBounds(bounds);\n
 				  //map.zoomOut();\n
 				  map.scrollWheelZoom.disable();\n
-				}";
-
+				
+					document.querySelector('#" . $this_map_id . " > .expand').addEventListener('click', function(e) {\n
+					map.flyToBounds(bounds);\n
+					self.hidePopup" . $map_id . "(); \n
+					e.stopPropagation();\n
+				});\n
+				};";
 			//start map rendering in JS
 			if($custom_map_marker){
 			    $html .= "var img = new Image();
