@@ -86,6 +86,7 @@ class xamoom_Public {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/xamoom-public.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . "-LEAFLET", plugins_url('leaflet/leaflet.js', __FILE__), array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . "-OWL", plugins_url('owl-carousel/owl.carousel.min.js', __FILE__), array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . "-MOMENT", plugins_url('moment/moment.js', __FILE__), array( 'jquery' ), $this->version, false );
 	}
 
 	/**
@@ -113,7 +114,9 @@ class xamoom_Public {
 		$content_blocks = array();
 		$style = false;
 		$custom_map_marker = false;
-
+		if ($content == null) {
+			return '';
+		}
 		// HANDLE ERROR
 		if(array_key_exists('errors', $content) && $content['errors']) {
 			$errCode = $content['errors'][0]['code'];
@@ -171,7 +174,142 @@ class xamoom_Public {
 
 	  }
 
-	    return $html;
+	 $time_location_html = $this->generate_time_location_html($content, $lang);
+
+	 return $time_location_html . $html;
+
+	}
+
+	public function generate_time_location_html($content, $lang) {
+		$related_spot = null;
+		if (isset($content['data']['relationships']['related-spot']['data']['id'])) {
+			$api = $this->encodeURI($this->api_endpoint . "spots?id=". $content['data']['relationships']['related-spot']['data']['id'] ."&lang=" . $lang);
+			$spot = $this->call_api($api);
+			$related_spot = json_decode($spot, true);
+		}
+		$html = "<script>  \n
+		 function downloadCalendar(title, description, dateFrom, dateTo) {  \n
+			const anchor = document.createElement('a');  \n
+			anchor.target = '_blank';  \n
+			anchor.setAttribute('href', `data:text/calendar;charset=utf-8,\${encodeURIComponent(this.generateCalendar(title, description, dateFrom, dateTo))}`);  \n
+			anchor.setAttribute('download', `\${title.replace(/\s/g, '_')}.ics`);  \n
+			document.body.appendChild(anchor);  \n
+			anchor.click();  \n
+			document.body.removeChild(anchor);  \n
+		  };  \n
+	   function generateCalendar(subject, description, begin, stop) {  \n
+		  const SEPARATOR = (navigator.appVersion.indexOf('Win') !== -1) ? '\\r\\n' : '\\n';  \n
+		  const calendarStart = [  \n
+			'BEGIN:VCALENDAR',  \n
+			'PRODID:Calendar',  \n
+			'VERSION:2.0',  \n
+		  ].join(SEPARATOR);  \n
+		  const calendarEnd = `\${SEPARATOR}END:VCALENDAR`;  \n
+	    \n
+		  const startDate = new Date(begin);  \n
+		  const endDate = new Date(stop);  \n
+		  const nowDate = new Date();  \n
+	    \n
+		  const startYear = (`0000\${startDate.getFullYear().toString()}`).slice(-4);  \n
+		  const startMonth = (`00\${(startDate.getMonth() + 1).toString()}`).slice(-2);  \n
+		  const startDay = (`00\${(startDate.getDate()).toString()}`).slice(-2);  \n
+		  const startHours = (`00\${startDate.getHours().toString()}`).slice(-2);  \n
+		  const startMinutes = (`00\${startDate.getMinutes().toString()}`).slice(-2);  \n
+		  const startSeconds = (`00\${startDate.getSeconds().toString()}`).slice(-2);  \n
+	    \n
+		  const endYear = (`0000\${endDate.getFullYear().toString()}`).slice(-4);  \n
+		  const endMonth = (`00\${(endDate.getMonth() + 1).toString()}`).slice(-2);  \n
+		  const endDay = (`00\${(endDate.getDate()).toString()}`).slice(-2);  \n
+		  const endHours = (`00\${endDate.getHours().toString()}`).slice(-2);  \n
+		  const endMinutes = (`00\${endDate.getMinutes().toString()}`).slice(-2);  \n
+		  const endSeconds = (`00\${endDate.getSeconds().toString()}`).slice(-2);  \n
+	    \n
+		  const nowYear = (`0000\${nowDate.getFullYear().toString()}`).slice(-4);  \n
+		  const nowMonth = (`00\${(nowDate.getMonth() + 1).toString()}`).slice(-2);  \n
+		  const nowDay = (`00\${(nowDate.getDate()).toString()}`).slice(-2);  \n
+		  const nowHours = (`00\${nowDate.getHours().toString()}`).slice(-2);  \n
+		  const nowMinutes = (`00\${nowDate.getMinutes().toString()}`).slice(-2);  \n
+		  const nowSeconds = (`00\${nowDate.getSeconds().toString()}`).slice(-2);  \n
+	    \n
+		  // Since some calendars don't add 0 second events, we need to remove time if there is none...  \n
+		  let startTime = '';  \n
+		  let endTime = '';  \n
+		  if (startHours + startMinutes + startSeconds + endHours + endMinutes + endSeconds !== 0) {  \n
+			startTime = `T\${startHours}\${startMinutes}\${startSeconds}`;  \n
+			endTime = `T\${endHours}\${endMinutes}\${endSeconds}`;  \n
+		  }  \n
+		  const nowTime = `T\${nowHours}\${nowMinutes}\${nowSeconds}`;  \n
+	    \n
+		  const start = startYear + startMonth + startDay + startTime;  \n
+		  const end = endYear + endMonth + endDay + endTime;  \n
+		  const now = nowYear + nowMonth + nowDay + nowTime;  \n
+		  let descriptionCopy = description;  \n
+		  if (!description || description === 'None') {  \n
+			descriptionCopy = '';  \n
+		  }  \n
+		  let location = null; \n";
+		  if ($related_spot['data']['attributes']['location']) {
+			  $html .= "location = '". $related_spot['data']['attributes']['name'] ."';";
+		  }
+			$html .= "let calendarEvent = [  \n
+			'BEGIN:VEVENT',  \n
+			'UID:1@default',  \n
+			'CLASS:PUBLIC',  \n
+			`DESCRIPTION:\${descriptionCopy}`,  \n
+			`LOCATION:\${location}`,  \n
+			`DTSTAMP;VALUE=DATE-TIME:\${now}`,  \n
+			`DTSTART;VALUE=DATE-TIME:\${start}`,  \n
+			`DTEND;VALUE=DATE-TIME:\${end}`,  \n
+			`SUMMARY;LANGUAGE=" . $lang . ":\${subject}`,  \n
+			'TRANSP:TRANSPARENT',  \n
+			'END:VEVENT',  \n
+		  ];  \n
+		if (!location) {  \n
+		  calendarEvent.splice(4, 1);  \n
+			if (!stop || stop === 'None') {  \n
+		  calendarEvent.splice(6, 1);  \n
+		}  \n
+		}  \n
+		if (!stop || stop === 'None') {  \n
+		  calendarEvent.splice(7, 1);  \n
+		}  \n
+		  calendarEvent = calendarEvent.join(SEPARATOR);  \n
+	    \n
+		  return calendarStart + SEPARATOR + calendarEvent + calendarEnd;  \n
+		};  \n
+	  </script>";
+		$html .= "<div class=\"time-and-location\">";
+		if(isset($content['data']['attributes']['meta-datetime-from'])) {
+			$html .= "<a onclick='downloadCalendar(\"". $content['data']['attributes']['display-name'] ."\", \"". $content['data']['attributes']['description'] ."\", \"". $content['data']['attributes']['meta-datetime-from'] ."\", \"". (isset($content['data']['attributes']['meta-datetime-to']) ? $content['data']['attributes']['meta-datetime-to'] : 'None') ."\")' class=\"time\"> \n
+					<div> \n
+						<p> \n
+						". $content['data']['attributes']['meta-datetime-from'] ." ";
+						if(isset($content['data']['attributes']['meta-datetime-to'])) {
+				$html .= "&ndash; ". $content['data']['attributes']['meta-datetime-to'] ."";
+			}
+			$html .= "</p></div></a>"; 
+		}
+		if ($related_spot['data']['attributes']['location']) {
+			
+			$html .="<a target=\"_blank\" href=\"https://maps.google.com/maps?z=12&t=m&q=" . $related_spot['data']['attributes']['location']['lat'] .",". $related_spot['data']['attributes']['location']['lon'] . "\"  class=\"location\"> \n
+			<div> \n
+				<p><i class=\"fa fa-map-marker\"></i>". $related_spot['data']['attributes']['name'] ."</p> \n
+			</div>    \n
+		</a> ";
+
+
+		}
+			$html .= "</div>"; 
+			if(isset($content['data']['attributes']['meta-datetime-from'])) {
+			$html .= "<script>
+			moment.locale('" . get_locale() ."'); \n
+			document.querySelector(\"div.time-and-location > a.time > div > p\").innerHTML = `<i class=\"fa fa-clock-o\"></i>\${moment('". $content['data']['attributes']['meta-datetime-from'] ."').format('dd., DD. MMM, LT')}";
+			if(isset($content['data']['attributes']['meta-datetime-to'])) {
+					$html .= "&ndash; \${moment('" . $content['data']['attributes']['meta-datetime-to'] . "').format('dd., DD. MMM, LT')}";
+				}
+			$html .= "`;</script>";
+			}
+		return $html;
 	}
 
 	public function generate_blocks_html($block, $block_type, $html, $lang, $id, $custom_map_marker) {
@@ -445,6 +583,19 @@ class xamoom_Public {
 							paddingBottomRight: [0, 150],\n
 						});\n
 						document.querySelector('#" . $this_map_id . " > .spotmap-popup').innerHTML = self.createInfoWindowPopup(spot);\n
+
+						const calculatedheight = document.querySelector('#" . $this_map_id . " > div.spotmap-popup').offsetHeight - 20 - document.querySelector('#" . $this_map_id . " > div.spotmap-popup > h2').offsetHeight;\n
+						const imagepart = document.querySelector('#" . $this_map_id . " > div.spotmap-popup > div.image-part > *');\n
+						if (imagepart) {\n
+							imagepart.style.height = calculatedheight + 'px';\n
+							imagepart.style.maxHeight = calculatedheight + 'px';\n
+							imagepart.style.width = calculatedheight + 'px';\n
+						}\n
+						const description = document.querySelector('#" . $this_map_id . " > div.spotmap-popup .description');\n 
+						if (description) { \n
+							const btnheight = document.querySelector('#" . $this_map_id . " > div.spotmap-popup > div.spotmap-buttons').offsetHeight; \n
+							description.style.height = calculatedheight - btnheight + 'px';  \n
+						} \n
 						\n
 						// show popup\n
 						self.jQuery('#" . $this_map_id . " > .spotmap-popup').animate({\n
@@ -483,15 +634,15 @@ class xamoom_Public {
 					};  \n
 					  function _generateSections(image, name, description) {  \n
 					      let imageSection = '<div></div>';  \n
-					      let descriptionSection = '<p class=\"description\"></p>';  \n
+					      let descriptionSection = '<p style=\"height:59%;\" class=\"description\"> </p>';  \n
 						\n
 					      if (image) {  \n
-					        imageSection = `<img src=\"\${image}\"/>`;  \n
+					        imageSection = `<img style=\"width: 114px;height: 114px;max-height: 114px;\" src=\"\${image}\"/>`;  \n
 					      }  \n
 					    \n
 					      const spotNameSection = `<h2>\${name}</h2>`;  \n
 					      if (description) {  \n
-					        descriptionSection = `<p class=\"description\">\${description}</p>`;  \n
+					        descriptionSection = `<p style=\"height:59%;\" class=\"description\">\${description}</p>`;  \n
 					      }  \n
 					    \n
 					      return { imageSection, spotNameSection, descriptionSection };  \n
