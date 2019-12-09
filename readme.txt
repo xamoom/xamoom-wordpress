@@ -2,9 +2,9 @@
 Contributors: xamoom
 Tags: CMS, Location Based Service, Mobile Marketing, NFC, QR, iBeacon
 Requires at least: 4.5
-Tested up to: 5.1.1
+Tested up to: 5.2.4
 Requires PHP: 5.2.4
-Stable tag: trunk
+Stable tag: 3.2.0
 
 The connection between the xamoom CMS and WordPress. Use your great mobile content also on the desktop.
 
@@ -42,4 +42,19 @@ Your API key is available for you on the first page of the CMS at xamoom.net.
 2. select the content to insert
 
 == Changelog ==
-Added compatibility for WordPress’s plugin repository.
+= 3.2 =
+* Spotmap Popups have a new look and design.
+* Time & Location is now shown when required.
+
+= 3.1 =
+* Fixed rare issue involving maps not loading.
+* Content using security package is now better visualized.
+
+= 3.0 =
+* Added new download type GPX.
+
+= 2.0 =
+* Added new content block gallery.
+
+= 1.0 = 
+* Added compatibility for WordPress’s plugin repository.
