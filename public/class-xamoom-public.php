@@ -183,7 +183,7 @@ class xamoom_Public {
 	public function generate_time_location_html($content, $lang) {
 		$related_spot = null;
 		if (isset($content['data']['relationships']['related-spot']['data']['id'])) {
-			$api = $this->encodeURI($this->api_endpoint . "spots?id=". $content['data']['relationships']['related-spot']['data']['id'] ."&lang=" . $lang);
+			$api = $this->encodeURI($this->api_endpoint . "spots/". $content['data']['relationships']['related-spot']['data']['id'] ."?lang=" . $lang);
 			$spot = $this->call_api($api);
 			$related_spot = json_decode($spot, true);
 		}
@@ -690,6 +690,8 @@ class xamoom_Public {
 					$marker['description'] = str_replace(array('"'), '\"', $marker['description']);
 					$marker['description'] = str_replace(array('`'), '\`', $marker['description']);
 					$marker['description'] = str_replace(array("'"), "\'", $marker['description']);
+				} else {
+					$marker['description'] = '';
 				}
 
 				if(array_key_exists("name",$marker)) {
