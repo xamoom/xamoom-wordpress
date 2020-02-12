@@ -280,7 +280,15 @@ class xamoom_Public {
 	  </script>";
 		$html .= "<div class=\"time-and-location\">";
 		if(isset($content['data']['attributes']['meta-datetime-from'])) {
-			$html .= "<a onclick='downloadCalendar(\"". $content['data']['attributes']['display-name'] ."\", \"". $content['data']['attributes']['description'] ."\", \"". $content['data']['attributes']['meta-datetime-from'] ."\", \"". (isset($content['data']['attributes']['meta-datetime-to']) ? $content['data']['attributes']['meta-datetime-to'] : 'None') ."\")' class=\"time\"> \n
+			function clean_param($string){
+				  $single_qu_esc = addslashes($string);
+				  return htmlentities($single_qu_esc, ENT_QUOTES);
+			  }
+			$name = clean_param($content['data']['attributes']['display-name']);
+			$excerpt = clean_param($content['data']['attributes']['description']);
+			$dateFrom = $content['data']['attributes']['meta-datetime-from'];
+			$dateTo = (isset($content['data']['attributes']['meta-datetime-to']) ? $content['data']['attributes']['meta-datetime-to'] : 'None');
+			$html .= "<a onclick='downloadCalendar(\"". $name ."\", \"". $excerpt ."\", \"". $dateFrom ."\", \"".$dateTo ."\")' class=\"time\"> \n
 					<div> \n
 						<p> \n
 						". $content['data']['attributes']['meta-datetime-from'] ." ";
