@@ -29,10 +29,12 @@ along with xamoom-wordpress.  If not, see <http://www.gnu.org/licenses/>.
 class xamoom_Activator {
 
 	/**
-	 * Nothing to do here so far.
+	 * Sets transient flag 'xamoom-plugin-activated' so we know if we can show admin notice
 	 *
 	 * @since    1.0.0
 	 */
-	public static function activate() { }
+	public static function activate() {
+			set_transient( 'xamoom-plugin-activated', true, 5 );
+	 }
 
 }
