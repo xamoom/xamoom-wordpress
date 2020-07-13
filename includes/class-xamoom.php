@@ -68,16 +68,18 @@ class xamoom {
 	public function __construct() {
 
 		$this->plugin_name = 'xamoom';
-		$this->version = '1.4.3';
+		$this->version = '3.4.0';
 		$this->api_endpoint = 'https://api.xamoom.net/consumer/';
 		// $this->api_endpoint = 'https://xamoom-dev.appspot.com/consumer/'; // DEV
-
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_block_hooks();
 		$this->define_public_hooks();
 		$this->define_register_settings();
+
+		add_action( 'admin_notices', array( $this, 'plugin_activation' ) );
+		
 	}
 
 	/**
@@ -200,8 +202,26 @@ class xamoom {
 		register_setting( 'xamoom-settings-group', 'xamoom_api_key' );
 		register_setting( 'xamoom-settings-group', 'xamoom_custom_css' );
 	}
-
-
+	
+	public function plugin_activation() {
+		if( get_transient( 'xamoom-plugin-activated' ) ){
+					
+			$html = '<div class="notice notice-success is-dismissible">';
+			$html .= '<p>';
+			$locale = get_locale();
+			
+			if (substr($locale, 0, 2) == "de") {
+				$html .= __( "Vielen Dank für die Nutzung des xamoom Plugins. Wir bitten Sie nun zur Eingabe Ihres <a href='options-general.php?page=xamoom-settings'>API-Key hier.</a>", 'xamoom' );
+			} else {
+				$html .= __( "Thank you very much for using the xamoom plugin. We kindly ask you to enter your <a href='options-general.php?page=xamoom-settings'>API-Key here.</a>", 'xamoom' );
+			}
+			$html .= '</p>';
+			$html .= '</div>';
+			echo $html;
+			/* Delete transient, only display this notice once. */
+			delete_transient( 'xamoom-plugin-activated' );
+		}
+	}
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
@@ -244,3 +264,4 @@ class xamoom {
 	}
 
 }
+register_activation_hook( __FILE__, array( 'xamoom', 'fx_admin_notice_example_activation_hook' ) );

@@ -169,8 +169,8 @@ function xamoomSelectContent(content_id){
               }
             }
           },
-          error: function(){ //something went wrong (check console)
-              alert(i18n_generic_error);
+          error: function(e){ //something went wrong (check console)
+              console.error(i18n_generic_error, e);
           },
           processData: false,
           type: 'GET',
