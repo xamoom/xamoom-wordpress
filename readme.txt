@@ -4,7 +4,7 @@ Tags: CMS, Location Based Service, Mobile Marketing, NFC, QR, iBeacon
 Requires at least: 4.5
 Tested up to: 5.4
 Requires PHP: 5.2.4
-Stable tag: 3.4.0
+Stable tag: 3.5.0
 
 The connection between the xamoom CMS and WordPress. Use your great mobile content also on the desktop.
 
@@ -42,6 +42,9 @@ Your API key is available for you on the first page of the CMS at xamoom.net.
 2. select the content to insert
 
 == Changelog ==
+= 3.5 =
+* Added new content block tour.
+
 = 3.4 =
 * Now shows activation message.
 

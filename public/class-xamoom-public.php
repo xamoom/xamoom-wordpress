@@ -87,6 +87,8 @@ class xamoom_Public {
 		wp_enqueue_script( $this->plugin_name . "-LEAFLET", plugins_url('leaflet/leaflet.js', __FILE__), array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . "-OWL", plugins_url('owl-carousel/owl.carousel.min.js', __FILE__), array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . "-MOMENT", plugins_url('moment/moment.js', __FILE__), array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . "-TURF", plugins_url('turf/turf.min.js', __FILE__), array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . "-CHART", plugins_url('chartjs/chart.min.js', __FILE__), array( 'jquery' ), $this->version, false );
 	}
 
 	/**
@@ -338,464 +340,594 @@ class xamoom_Public {
 			break;
 
 			case "2": //VIDEO
-			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
+				if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_caption'>" . $block['title'] . "</p>"; }
 
-				if (strpos($block['video-url'],'vimeo.com') == true) { //vimeo video
-					$urlSegments = explode('/', $block['video-url']);
-					$vimeoVideoID =  $urlSegments[sizeof($urlSegments)-1];
-						$html .= "<div class='xamoom-videoWrapper'>";
-						$html .= '<iframe src="//player.vimeo.com/video/'. $vimeoVideoID .'" width="100%" height="auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>' .'</iframe>';
-						$html .= "<div class='swipe-overlay1'></div>" . "<div class='swipe-overlay2'></div>" . "<div class='swipe-overlay3'></div>";
-						$html .= "</div>";
-					
+					if (strpos($block['video-url'],'vimeo.com') == true) { //vimeo video
+						$urlSegments = explode('/', $block['video-url']);
+						$vimeoVideoID =  $urlSegments[sizeof($urlSegments)-1];
+							$html .= "<div class='xamoom-videoWrapper'>";
+							$html .= '<iframe src="//player.vimeo.com/video/'. $vimeoVideoID .'" width="100%" height="auto" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>' .'</iframe>';
+							$html .= "<div class='swipe-overlay1'></div>" . "<div class='swipe-overlay2'></div>" . "<div class='swipe-overlay3'></div>";
+							$html .= "</div>";
 						
-				}	else if (strpos($block['video-url'],'youtube.com') == false && strpos($block['video-url'],'youtu.be') == false) { //VIDEO FILE
-				//html5 video player
-				$html .= "<video width='100%' controls>
-										<source src='" . $block['video-url'] . "'>
-									  Your browser does not support the video tag.
-									</video>";
-			} else { //YOUTUBE
-				//extract youtube id
-				parse_str( parse_url( $block['video-url'], PHP_URL_QUERY ), $query_vars );
-				$youtube_id = $query_vars['v'];
+							
+					}	else if (strpos($block['video-url'],'youtube.com') == false && strpos($block['video-url'],'youtu.be') == false) { //VIDEO FILE
+					//html5 video player
+					$html .= "<video width='100%' controls>
+											<source src='" . $block['video-url'] . "'>
+										Your browser does not support the video tag.
+										</video>";
+				} else { //YOUTUBE
+					//extract youtube id
+					parse_str( parse_url( $block['video-url'], PHP_URL_QUERY ), $query_vars );
+					$youtube_id = $query_vars['v'];
 
-				$html .= "<div class='xamoom-videoWrapper'>" .
-							"<iframe width='100%' height='auto' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
-								"<div class='swipe-overlay1'></div>" .
-								"<div class='swipe-overlay2'></div>" .
-								"<div class='swipe-overlay3'></div>" .
-								 "</div>";
-			}
+					$html .= "<div class='xamoom-videoWrapper'>" .
+								"<iframe width='100%' height='auto' src='https://www.youtube.com/embed/" . $youtube_id . "' frameborder='0' allowfullscreen></iframe>" .
+									"<div class='swipe-overlay1'></div>" .
+									"<div class='swipe-overlay2'></div>" .
+									"<div class='swipe-overlay3'></div>" .
+									"</div>";
+				}
 			break;
 
 		    case "3": //IMAGE
-			$scale = 100;
-			if(array_key_exists("scale-x",$block) && $block['scale-x'] != ""){ $scale =  $block['scale-x']; }
+				$scale = 100;
+				if(array_key_exists("scale-x",$block) && $block['scale-x'] != ""){ $scale =  $block['scale-x']; }
 
-			$alt_text = "";
-			if(array_key_exists("alt-text",$block) && $block['alt-text'] != ""){ $alt_text =  $block['alt-text']; }
+				$alt_text = "";
+				if(array_key_exists("alt-text",$block) && $block['alt-text'] != ""){ $alt_text =  $block['alt-text']; }
 
-			$link_url = null;
-			if(array_key_exists("link-url",$block) && $block['link-url'] != ""){ $link_url =  $block['link-url']; }
+				$link_url = null;
+				if(array_key_exists("link-url",$block) && $block['link-url'] != ""){ $link_url =  $block['link-url']; }
 
-			if($link_url != null){ $html .= "<a href='" . $link_url . "' target='_blank'>"; }
+				if($link_url != null){ $html .= "<a href='" . $link_url . "' target='_blank'>"; }
 
-            
-			if(array_key_exists("file-id",$block)){ $html .=  "<img class='xamoom_image owl-lazy' alt='". $alt_text . "' style='width:" . $scale . "%;' src='" . $block['file-id'] . "' />"; }
-            		
-			if((array_key_exists("copyright",$block) && $block['copyright'] != "") || (array_key_exists("title",$block) && $block['title'] != "")){
-				$html .=  "<div class='clearfix' style='width:100%;'>";
+				
+				if(array_key_exists("file-id",$block)){ $html .=  "<img class='xamoom_image owl-lazy' alt='". $alt_text . "' style='width:" . $scale . "%;' src='" . $block['file-id'] . "' />"; }
+						
+				if((array_key_exists("copyright",$block) && $block['copyright'] != "") || (array_key_exists("title",$block) && $block['title'] != "")){
+					$html .=  "<div class='clearfix' style='width:100%;'>";
 
-				$html .=  "<div style='float:left;'>";
-				if(array_key_exists("title",$block) && $block['title'] != ""){
-					$html .=  "<p style='margin:0px;' class='xamoom_caption'>" . $block['title'] . "</p>";
-				} else {
-					$html .=  "&nbsp;";
+					$html .=  "<div style='float:left;'>";
+					if(array_key_exists("title",$block) && $block['title'] != ""){
+						$html .=  "<p style='margin:0px;' class='xamoom_caption'>" . $block['title'] . "</p>";
+					} else {
+						$html .=  "&nbsp;";
+					}
+					$html .=  "</div>";
+
+					$html .=  "<div style='float:right;'>";
+					if(array_key_exists("copyright",$block) && $block['copyright'] != ""){
+						$html .=  "<p class='xamoom_copyright'>" . $block['copyright'] . "</p>";
+					} else {
+						$html .=  "&nbsp;";
+					}
+					$html .=  "</div>";
+
+					$html .=  "</div>";
 				}
-				$html .=  "</div>";
 
-				$html .=  "<div style='float:right;'>";
-				if(array_key_exists("copyright",$block) && $block['copyright'] != ""){
-					$html .=  "<p class='xamoom_copyright'>" . $block['copyright'] . "</p>";
-				} else {
-					$html .=  "&nbsp;";
-				}
-				$html .=  "</div>";
-
-				$html .=  "</div>";
-			}
-
-			if($link_url != null){ $html .= "</a>"; }
+				if($link_url != null){ $html .= "</a>"; }
 
 			break;
 
 		    case "4": //LINK
-			$link_title = "";
-			$link_url = "";
-			$link_type = "0";
-			if(array_key_exists("title",$block)){ $link_title = $block['title']; }
-			if(array_key_exists("link-url",$block)){ $link_url = $block['link-url']; }
-			if(array_key_exists("link-type",$block)){ $link_type = $block['link-type']; }
+				$link_title = "";
+				$link_url = "";
+				$link_type = "0";
+				if(array_key_exists("title",$block)){ $link_title = $block['title']; }
+				if(array_key_exists("link-url",$block)){ $link_url = $block['link-url']; }
+				if(array_key_exists("link-type",$block)){ $link_type = $block['link-type']; }
 
-			//find fitting icon
-			$icon = "fa-globe";
-			switch ($link_type) {
-			  case "0": //FACEBOOK
-					$icon = "fa-facebook-square";
-					break;
-			  case "1": //TWITTER
-					$icon = "fa-twitter-square";
-					break;
-			  case "2": //WEB
-					$icon = "fa-globe";
-					break;
-			  case "3": //AMAZON
-					$icon = "fa-shopping-cart";
-					break;
-			  case "4": //WIKIPEDIA
-					$icon = "fa-globe";
-					break;
-			  case "5": //LINKEDIN
-					$icon = "fa-linkedin";
-					break;
-			  case "6": //FLICKR
-					$icon = "fa-flickr";
-					break;
-			  case "7": //SOUNDCLOUD
-					$icon = "fa-soundcloud";
-					break;
-			  case "8": //ITUNES
-					$icon = "fa-music";
-					break;
-			  case "9": //YOUTUBE
-					$icon = "fa-youtube-play";
-					break;
-			  case "10": //GOOGLE+
-					$icon = "fa-google-plus";
-					break;
-				case "11": //TEL
-					$icon = "fa-phone";
-					break;
-				case "12": //EMAIL
-					$icon = "fa-envelope-o";
-					break;
-				case "13": //SPOTIFY
-					$icon = "fa-spotify";
-					break;
-				case "14": //GOOGLE_MAPS
-					$icon = "fa-location-arrow";
-					break;
-			}
+				//find fitting icon
+				$icon = "fa-globe";
+				switch ($link_type) {
+				case "0": //FACEBOOK
+						$icon = "fa-facebook-square";
+						break;
+				case "1": //TWITTER
+						$icon = "fa-twitter-square";
+						break;
+				case "2": //WEB
+						$icon = "fa-globe";
+						break;
+				case "3": //AMAZON
+						$icon = "fa-shopping-cart";
+						break;
+				case "4": //WIKIPEDIA
+						$icon = "fa-globe";
+						break;
+				case "5": //LINKEDIN
+						$icon = "fa-linkedin";
+						break;
+				case "6": //FLICKR
+						$icon = "fa-flickr";
+						break;
+				case "7": //SOUNDCLOUD
+						$icon = "fa-soundcloud";
+						break;
+				case "8": //ITUNES
+						$icon = "fa-music";
+						break;
+				case "9": //YOUTUBE
+						$icon = "fa-youtube-play";
+						break;
+				case "10": //GOOGLE+
+						$icon = "fa-google-plus";
+						break;
+					case "11": //TEL
+						$icon = "fa-phone";
+						break;
+					case "12": //EMAIL
+						$icon = "fa-envelope-o";
+						break;
+					case "13": //SPOTIFY
+						$icon = "fa-spotify";
+						break;
+					case "14": //GOOGLE_MAPS
+						$icon = "fa-location-arrow";
+						break;
+				}
 
-			//render block
-			$html .= "<p class='xamoom_link'><i class='fa " . $icon . "'></i> <a href='" . $link_url . "' target='_blank'>" . $link_title . "</a></p>";
-			if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
+				//render block
+				$html .= "<p class='xamoom_link'><i class='fa " . $icon . "'></i> <a href='" . $link_url . "' target='_blank'>" . $link_title . "</a></p>";
+				if(array_key_exists("text",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
 			break;
 
 		    case "5": //EBOOK
-			$ebook_url = "";
-			if(array_key_exists("file-id",$block)){ $ebook_url = $block['file-id']; }
-			if(array_key_exists("title",$block)){
-				$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>" . $block['title'] . "</a></p>";
-			} else {
-				$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
-			}
-			if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
+				$ebook_url = "";
+				if(array_key_exists("file-id",$block)){ $ebook_url = $block['file-id']; }
+				if(array_key_exists("title",$block)){
+					$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>" . $block['title'] . "</a></p>";
+				} else {
+					$html .= "<p class='xamoom_link'><i class='fa fa-book'></i> <a href='" . $ebook_url . "'>Download Ebook</a></p>";
+				}
+				if(array_key_exists("artists",$block)){ $html .=  "<p class='xamoom_smalltext'>" . $block['artists'] . "</p>"; }
 			break;
 
 		    case "6": //CONTENT BLOCK CONTENT GET'S IGNORED, BECAUSE IT MAKES NO SENSE TO LINK TO XAMOOM CONTENT PAGES
 			break;
 
 		    case "7": //SOUNDCLOUD
-			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
-			$html .= "<iframe width='100%' height='150' scrolling='no' frameborder='no' " .
-				    "src='https://w.soundcloud.com/player/?url=" . $block['soundcloud-url'] . "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true'>" .
-				    "</iframe>";
+				if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<h2 class='xamoom_headline'>" . $block['title'] . "</h2>"; }
+				$html .= "<iframe width='100%' height='150' scrolling='no' frameborder='no' " .
+						"src='https://w.soundcloud.com/player/?url=" . $block['soundcloud-url'] . "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=false&amp;show_reposts=false&amp;visual=true'>" .
+						"</iframe>";
 			break;
 
 			case "8": //DOWNLOAD
-			$download_title = "";
-			$download_url = "";
-			$download_type = "0";
-			if(array_key_exists("title",$block)){ $download_title = $block['title']; }
-			if(array_key_exists("file-id",$block)){ $download_url = $block['file-id']; }
-			if(array_key_exists("download-type",$block)){ $download_type = $block['download-type']; }
-			
-			$icon = "fa-user-plus";
-			switch ($download_type) {
-				case "0": //VCF
+				$download_title = "";
+				$download_url = "";
+				$download_type = "0";
+				if(array_key_exists("title",$block)){ $download_title = $block['title']; }
+				if(array_key_exists("file-id",$block)){ $download_url = $block['file-id']; }
+				if(array_key_exists("download-type",$block)){ $download_type = $block['download-type']; }
+				
 				$icon = "fa-user-plus";
-				break;
-			    case "1": //ICAL
-				$icon = "fa-calendar";
-				break;
-			}
+				switch ($download_type) {
+					case "0": //VCF
+					$icon = "fa-user-plus";
+					break;
+					case "1": //ICAL
+					$icon = "fa-calendar";
+					break;
+				}
 
-			$css_class = "";
-			switch ($download_type) {
-				case "0": //VCF
-				$css_class = "vcf";
-				break;
-			    case "1": //ICAL
-				$css_class = "ical";
-				break;
-			    case "2": //gpx
-				$css_class = "gpx";
-				break;
-			}
+				$css_class = "";
+				switch ($download_type) {
+					case "0": //VCF
+					$css_class = "vcf";
+					break;
+					case "1": //ICAL
+					$css_class = "ical";
+					break;
+					case "2": //gpx
+					$css_class = "gpx";
+					break;
+				}
 
-			// $html .= '<a href="' . $download_url . '" class="download-block ' . $css_class .' button-background" >';
-			// $html .= '<div class="download-block-icon">';
-			// if($download_type == "2") { // GPX
-			// 	$html .= '<div class="button-icon gpx-icon"></div> ';			
-			// } else {
-			// 	$html .= '<i class="button-icon fa '. $icon .'"></i>';
-			// }
-			// $html .= '</div>';
+				// $html .= '<a href="' . $download_url . '" class="download-block ' . $css_class .' button-background" >';
+				// $html .= '<div class="download-block-icon">';
+				// if($download_type == "2") { // GPX
+				// 	$html .= '<div class="button-icon gpx-icon"></div> ';			
+				// } else {
+				// 	$html .= '<i class="button-icon fa '. $icon .'"></i>';
+				// }
+				// $html .= '</div>';
 
-			// $html .= '<div class="download-block-content">';
-			// $html .= '<h4 class="button-text">' . $download_title . '</h4>';
-			// if(array_key_exists("text",$block)){ $html .= '<p class="button-text">' . $block['text'] . '</p>'; }
-			// $html .= '</div>';			
-			// $html .= '</a>';
+				// $html .= '<div class="download-block-content">';
+				// $html .= '<h4 class="button-text">' . $download_title . '</h4>';
+				// if(array_key_exists("text",$block)){ $html .= '<p class="button-text">' . $block['text'] . '</p>'; }
+				// $html .= '</div>';			
+				// $html .= '</a>';
 
-			$html .= "<p class='xamoom_link'>";
-			if($download_type == "2") { // GPX
-				$html .= '<div class="button-icon gpx-icon"></div> ';			
-			} else {
-				$html = "<i class='fa " . $icon . "'></i>";
-			}
-			
-			$html = "<a href='" . $download_url . "'>" . $download_title . "</a></p>";
-			if(array_key_exists("text",$block)){ $html.=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
+				$html .= "<p class='xamoom_link'>";
+				if($download_type == "2") { // GPX
+					$html .= '<div class="button-icon gpx-icon"></div> ';			
+				} else {
+					$html = "<i class='fa " . $icon . "'></i>";
+				}
+				
+				$html = "<a href='" . $download_url . "'>" . $download_title . "</a></p>";
+				if(array_key_exists("text",$block)){ $html.=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
 			break;
 
 		    case "9": //SPOTMAP
-			if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_title'>" . $block['title'] . "</p>"; }
-			$this_map_id = "xamoom-map-" . $id . "-" . $map_id; //get new map id that is unique on this page
-
-
-			//get spot map
-			$cursor = "";
-			$total_num_results = 0;
-			$has_more = true;
-			$spot_map = array('items' => array());
-			while($has_more){
-				$api = $this->encodeURI($this->api_endpoint . "spots?filter[tags]=[\"" . implode("\",\"", $block['spot-map-tags']) . "\"]&page[cursor]=" . $cursor . "&filter[has-location]=true&page[size]=100&lang=" . $lang);
-				$spot_map_response = $this->call_api($api);
-				$resp = json_decode($spot_map_response, true);
-				if ($resp['data']) {
-					$spot_map['items'] = array_merge($spot_map['items'], $resp['data']);
-				}
-				$total_num_results = $resp['meta']['total'];
-				$cursor = $resp['meta']['cursor'];
-				$has_more = $resp['meta']['has-more'];
-			}
-			//render map
-			$html .= "<div class='xamoom-map' id='" . $this_map_id . "'><div class='spotmap-popup'></div><button class=\"expand\"><i class=\"fa fa-expand\"></i></button></div>";
-			$html .= "<script language='JavaScript'>  function createNewPopup" . $map_id . "(spot, marker, map) { \n
-				const self = this;\n
-				marker.addTo(map); \n
-					marker.getElement().addEventListener('click', function(e) {\n
-						document.querySelectorAll('#" . $this_map_id . " .leaflet-marker-icon').forEach((el) => {\n
-							el.style.opacity = 0.5;\n
-						});\n
-						// clicked marker opacity 1 \n
-						marker.getElement().style.opacity = 1;\n
-						\n
-						// center marker with padding\n
-						const latlng = marker.getLatLng();\n
-						const bounds = latlng.toBounds(250); // 250 = meter\n
-						map.panTo(latlng).fitBounds(bounds, {\n
-							paddingBottomRight: [0, 150],\n
-						});\n
-						document.querySelector('#" . $this_map_id . " > .spotmap-popup').innerHTML = self.createInfoWindowPopup(spot);\n
-
-						const calculatedheight = document.querySelector('#" . $this_map_id . " > div.spotmap-popup').offsetHeight - 20 - document.querySelector('#" . $this_map_id . " > div.spotmap-popup > h2').offsetHeight;\n
-						const imagepart = document.querySelector('#" . $this_map_id . " > div.spotmap-popup > div.image-part > *');\n
-						if (imagepart) {\n
-							imagepart.style.height = calculatedheight + 'px';\n
-							imagepart.style.maxHeight = calculatedheight + 'px';\n
-							imagepart.style.width = calculatedheight + 'px';\n
-						}\n
-						const description = document.querySelector('#" . $this_map_id . " > div.spotmap-popup .description');\n 
-						if (description) { \n
-							const btnheight = document.querySelector('#" . $this_map_id . " > div.spotmap-popup > div.spotmap-buttons').offsetHeight; \n
-							description.style.height = calculatedheight - btnheight + 'px';  \n
-						} \n
-						\n
-						// show popup\n
-						self.jQuery('#" . $this_map_id . " > .spotmap-popup').animate({\n
-							bottom: 0,\n
-						}, 300);\n
-						\n
-						e.stopPropagation();\n
-				});\n
-				};\n
-				function hidePopup" . $map_id . "() { \n
-					this.jQuery('#" . $this_map_id . " > .spotmap-popup').animate({ \n
-					  bottom: '-50%', \n
-					}, 300); \n
-					document.querySelectorAll('#" . $this_map_id . " .leaflet-marker-icon').forEach((el) => { \n
-					  el.style.opacity = 1; \n
-				   }); \n
-				  }; \n
-				function createInfoWindowPopup(spot) {  \n
-				  let imageSection = '';  \n
-				  let spotNameSection = '';  \n
-					  let descriptionSection = '';  \n
-					  let openSection = '';  \n
-					  ({ imageSection, spotNameSection, descriptionSection } = this._generateSections(spot.image_url, spot.display_name, spot.description));  \n
-					  \n
-					  const navLinkSection =  \n
-					    `<a class=\"link\" href=\"https://maps.google.com/maps?z=12&t=m&q=\${spot.location.lat},\${spot.location.lon}\">Route</a>`;  \n
-					  \n
-					  const htmlRes = this._concatenateInfoWindowSections(  \n
-					    imageSection,  \n
-					    spotNameSection,  \n
-					    descriptionSection,  \n
-					    navLinkSection,  \n
-					    openSection,  \n
-					  );  \n
-					  return htmlRes;  \n
-					};  \n
-					  function _generateSections(image, name, description) {  \n
-					      let imageSection = '<div></div>';  \n
-					      let descriptionSection = '<p style=\"height:59%;\" class=\"description\"> </p>';  \n
-						\n
-					      if (image) {  \n
-					        imageSection = `<img style=\"width: 114px;height: 114px;max-height: 114px;\" src=\"\${image}\"/>`;  \n
-					      }  \n
-					    \n
-					      const spotNameSection = `<h2>\${name}</h2>`;  \n
-					      if (description) {  \n
-					        descriptionSection = `<p style=\"height:59%;\" class=\"description\">\${description}</p>`;  \n
-					      }  \n
-					    \n
-					      return { imageSection, spotNameSection, descriptionSection };  \n
-					  };  \n
-					   function _concatenateInfoWindowSections(  \n
-					    imageSection,  \n
-					    spotNameSection,  \n
-					    descriptionSection,  \n
-					    navLinkSection,  \n
-					    openSection,  \n
-					  ) {  \n
-					    return `\${spotNameSection}<div class=\"image-part\">\${imageSection}</div>\${descriptionSection}<div class=\"spotmap-buttons\">  \n
-					    \${navLinkSection}  \n
-					    \${openSection}  \n
-					    </div>`;  \n
-					};</script>";
-			//initialize script
-			$html .= "<script language='JavaScript'>\n
-						function renderMap_" . $map_id . "(width,height){\n
-									var map = L.map('" . $this_map_id . "').setView([0,0], 13);\n
-
-									// add OpenStreetMap tile layer
-									L.tileLayer('https://api.mapbox.com/styles/v1/xamoom-bruno/cjtjxdlkr3gr11fo5e72d5ndg/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoieGFtb29tLWJydW5vIiwiYSI6ImNqcmc1MWxqbTFsNms0Nm1yZGcycTFqbjAifQ.sDuEiFnBOHNoS-o7uTHvdA', { attribution: '<a href=\"https://xamoom.com\" target=\"_blank\" title=\"xamoom mobile platform\">xamoom</a>' }).addTo(map);\n
-									const self = this; \n
-										map.on('click', function() { \n
-											self.hidePopup" . $map_id . "(); \n
-									}); \n
-								
-									var bounds = [];\n";
-
-			//if there is a custom marker, set it up.
-			if($custom_map_marker){
-					$html .= "\nvar factor = 33 / height;";
-					$html .= "\nvar new_height = parseInt(height * factor);";
-					$html .= "\nvar new_width = parseInt(width * factor);";
-			    $html .= "\nvar LeafIcon = L.Icon.extend({options: {iconSize:[new_width, new_height],iconAnchor:[new_height / 2, new_height - 1],popupAnchor:  [0, -new_height]}}); ";
-			    $html .= "\nvar custom_marker = new LeafIcon({iconUrl: '" . $custom_map_marker ."'});";
-			}
-			//render marker script
-			for($j = 0; $j < $total_num_results; $j++){
-			    $marker = $spot_map['items'][$j]['attributes'];
-				//kill line breaks from marker descriptions and display_name
-				if(array_key_exists("description",$marker)) {
-					$marker['description'] = str_replace(array("\r", "\n"), "<br>", $marker['description']);
-					$marker['description'] = str_replace(array('"'), '\"', $marker['description']);
-					$marker['description'] = str_replace(array('`'), '\`', $marker['description']);
-					$marker['description'] = str_replace(array("'"), "\'", $marker['description']);
-				} else {
-					$marker['description'] = '';
-				}
-
-				if(array_key_exists("name",$marker)) {
-
-			    $marker['name'] = str_replace(array("\r", "\n"), "<br>", $marker['name']);
-				$marker['name'] = str_replace(array('"'), '\"', $marker['name']);
-
-					$marker['name'] = str_replace(array("'"), "\'", $marker['name']);
-					$marker['name'] = str_replace(array("`"), "\`", $marker['name']);
-				}
-			    //extract image
-			    $image = null;
-			    if(array_key_exists("image",$marker)){ $image = $marker['image']; }
-
-			    // add a markers
-			    if($custom_map_marker){
-						$html .= "\n this.createNewPopup" . $map_id . "({'image_url': '" . $image . "', 'display_name': '" . $marker['name'] . "', description: '" . $marker['description'] . "', location : { lat : " . $marker['location']['lat'] . ", lon: " . $marker['location']['lon'] . " }}, L.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "],{icon: custom_marker}), map )";
-			    } else {
-						$html .= "\n this.createNewPopup" . $map_id . "({'image_url': '" . $image . "', 'display_name': '" . $marker['name'] . "', description: '" . $marker['description'] . "', location : { lat : " . $marker['location']['lat'] . ", lon: " . $marker['location']['lon'] . " }}, L.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "]), map );";
-			    }
-
-			    $html .= "\nbounds.push([" . $marker['location']['lat'] . "," . $marker['location']['lon'] . "]);";
-			}
-		
-			//finalze JavaScript function to render map block
-			$html .= "map.fitBounds(bounds);\n
-				  //map.zoomOut();\n
-				  map.scrollWheelZoom.disable();\n
-				
-					document.querySelector('#" . $this_map_id . " > .expand').addEventListener('click', function(e) {\n
-					map.flyToBounds(bounds);\n
-					self.hidePopup" . $map_id . "(); \n
-					e.stopPropagation();\n
-				});\n
-				};";
-			//start map rendering in JS
-			if($custom_map_marker){
-			    $html .= "var img = new Image();
-					img.onload = function() {
-					    renderMap_" . $map_id . "(this.width,this.height);
-					}
-					img.src = '" . $custom_map_marker . "';";
-			} else { //render without custom makrer
-			    $html .= "renderMap_" . $map_id . "(this.width,this.height);";
-			}
-
-			$html .= "</script>"; //end script
-
-			$map_id++; //increment map_id
-			$_SESSION['map_id'] = $map_id; // Save current map id to session 
+			$html = $this->generate_spotmap($block, $block_type, $html, $lang, $id, $custom_map_marker, uniqid());
 			break;
 
 			case "12":
 
-			//call backend api
-			$res = $this->call_api($this->api_endpoint . "contents/" . $block['content-id'] . "?lang=" . $lang);
-			$gallery = json_decode($res, true);
-			//seperate includes into blocks and style
-			$gallery_items = array();
+				//call backend api
+				$res = $this->call_api($this->api_endpoint . "contents/" . $block['content-id'] . "?lang=" . $lang);
+				$gallery = json_decode($res, true);
+				//seperate includes into blocks and style
+				$gallery_items = array();
 
-			for($i = 0; $i < count($gallery['included']); $i++){
-				$inc = $gallery['included'][$i];
-	
-			
-			if($inc['type'] == "contentblocks" && in_array($inc['attributes']['block-type'], array(0,1,2,3), true) ) {
-					array_push($gallery_items,$inc);
+				for($i = 0; $i < count($gallery['included']); $i++){
+					$inc = $gallery['included'][$i];
+		
+				
+				if($inc['type'] == "contentblocks" && in_array($inc['attributes']['block-type'], array(0,1,2,3), true) ) {
+						array_push($gallery_items,$inc);
+					}
+
 				}
-
-			}
-			$html .= "<div class='gallery-container'>";
-			$html .= "<div class='owl-carousel owl-theme'>";
-			foreach ($gallery_items as $block) {
-			$html .= "<div class='gallery-block-item' id='gallery-block-item-". $block['attributes']['block-type']. "'>";
-			$html .= $this->generate_blocks_html($block['attributes'], $block['attributes']['block-type'], '', NULL, NULL, NULL);
-			$html .= "</div>";
-			}
-			$html .= "</div></div>";
-			$html .= "<style>
-			
-			</style>";
-			$html .= "<script>jQuery('.owl-carousel').owlCarousel({
-				loop:true,
-				items:1,
-				nav:true,
-				lazyLoad:true,
-				dots:true,
-				navText: ['<i class=\"carousel-nav-icons fa fa-chevron-left\"></i>', '<i class=\"carousel-nav-icons fa fa-chevron-right\"></i>'],
-				autoHeight: true,
-				autoHeightClass: 'owl-height'
-			})</script>";
+				$html .= "<div class='gallery-container'>";
+				$html .= "<div class='owl-carousel owl-theme'>";
+				foreach ($gallery_items as $block) {
+				$html .= "<div class='gallery-block-item' id='gallery-block-item-". $block['attributes']['block-type']. "'>";
+				$html .= $this->generate_blocks_html($block['attributes'], $block['attributes']['block-type'], '', NULL, NULL, NULL);
+				$html .= "</div>";
+				}
+				$html .= "</div></div>";
+				$html .= "<style>
+				
+				</style>";
+				$html .= "<script>jQuery('.owl-carousel').owlCarousel({
+					loop:true,
+					items:1,
+					nav:true,
+					lazyLoad:true,
+					dots:true,
+					navText: ['<i class=\"carousel-nav-icons fa fa-chevron-left\"></i>', '<i class=\"carousel-nav-icons fa fa-chevron-right\"></i>'],
+					autoHeight: true,
+					autoHeightClass: 'owl-height'
+				})</script>";
 			break;
+
+			case "14": // cb tour 
+
+				$ascend = 'Ascent';
+				$descend = 'Descent';
+				$elevation = 'Elevation';
+				$distance = 'Distance';
+				$mean_time_imperial = 'Ø duration at 3.1 mph';
+				$mean_time_metric = 'Ø duration at 5 km/h';
+				
+				if ($lang == 'de') {
+					$ascend = 'Aufstieg';
+					$descend = 'Abstieg';
+					$elevation = 'Elevation';
+					$distance = 'Distanz';
+				}
+				// $map_id = (isset($_SESSION['map_id']) ? $_SESSION['map_id'] : 1 ); //used to give seperate ids to seperate spotmaps
+				$map_id = uniqid();
+				// echo '<script>console.log("' . $html . '");</script>';
+				if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_title'>" . $block['title'] . "</p>"; }
+				$this_map_id = "xamoom-map-" . $id . "tour-" . $map_id; //get new map id that is unique on this page
+		
+		
+				//get spot map
+				$file_url = $block['file-id'];
+				$cursor = "";
+				$total_num_results = 0;
+				$has_more = true;
+				$spot_map = array('items' => array());
+				while($has_more){
+					$api = $this->encodeURI($this->api_endpoint . "spots?filter[tags]=[\"" . implode("\",\"", $block['spot-map-tags']) . "\"]&page[cursor]=" . $cursor . "&filter[has-location]=true&page[size]=100&lang=" . $lang);
+					$spot_map_response = $this->call_api($api);
+					$resp = json_decode($spot_map_response, true);
+					if ($resp['data']) {
+						$spot_map['items'] = array_merge($spot_map['items'], $resp['data']);
+					}
+					$total_num_results = $resp['meta']['total'];
+					$cursor = $resp['meta']['cursor'];
+					$has_more = $resp['meta']['has-more'];
+				}
+				//render map
+				$html .= "<div class='xamoom-map' id='" . $this_map_id . "'><div class='spotmap-popup'></div><button class='expand'><i class='fa fa-expand'></i></button><button class='expand info'><i class='fa fa-info'></i></button>
+				<div class='unitSwitch-wrap cf'>
+                
+				<div class='unitSwitch'>
+					<a href='javascript:void(0)' class='' data-unit-type='imperial'>Imperial</a>
+					<a href='javascript:void(0)' class='' data-unit-type='metric'>Metric</a>
+				</div>
+				</div>
+					<div class='tour-info' style='display: none;'>
+					<!-- <div class='length-way'></div>
+				<div class='elevation'></div>
+				<div class='length-time'></div> -->
+					<!-- <span class='box-header'>Tourdaten</span> -->
+					<span style='font-weight: bold;'></span>
+					<div class='box-content'>
+					<div class='tour-stats-container'>
+						<div>
+						<div class='tour-stats tour-stats-big tour-stats-length'>
+							<i class='fa fa-arrows-h'></i>
+							<span>---</span><span class='tour-stats-unit'>km</span>
+						</div>
+			
+						<div class='tour-meta-label tour-meta-label-distance'>". $distance ."</div>
+						</div>
+						<div>
+						<div class='tour-stats'>
+							<i class='fa fa-long-arrow-up'></i>
+							<span>---</span><span class='tour-stats-unit'>hm</span></div>
+						<div class='tour-stats'>
+							<i class='fa fa-long-arrow-down'></i>
+							<span>---</span><span class='tour-stats-unit'>hm</span>
+						</div>
+						<div class='tour-meta-label tour-meta-label-elevation'>". $ascend . " | ". $descend ."</div>
+						</div>
+						<div>
+						<div class='tour-stats tour-stats-time tour-stats-big'>
+							<i class='fa fa-clock-o'></i>
+							<strong>---</strong><span class='tour-stats-unit'>h</span>
+						</div>
+						<div class='tour-meta-label tour-meta-label-time'>". $mean_time_metric ."</div>
+						</div>
+					</div>
+					</div>
+				</div>
+					
+					</div>";
+					if ($block['show-elevation']) {
+
+						$html .= "<canvas id='elevationChart". $id . "tour-" . $map_id ."-metric' width='400' height='100' style='display: none;''></canvas>
+						<canvas id='elevationChart". $id . "tour-" . $map_id ."-imperial' width='400' height='100'  style='display: none;'></canvas>";
+					}
+					$html = $this->generate_map_script($html, ($id . 'tour'), $map_id, $this_map_id, $custom_map_marker, $total_num_results, $spot_map);
+					$html .= "<script language='JavaScript'>";
+					if($custom_map_marker){
+						$html .= "var img = new Image();
+							img.onload = async function() {
+							const mapBounds = await renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
+							map" . ($id . 'tour') . "_" . $map_id . " = mapBounds.map;\n
+							new tourMap('$id', '$map_id', '" . $file_url . "', ". $block['scale-x'] .", map" . ($id . 'tour') . "_" . $map_id . ",'" .  $lang ."', mapBounds.bounds  );
+							}
+							img.src = '" . $custom_map_marker . "';
+							";
+					} else { //render without custom marker
+						$html .= "const mapBounds = await renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
+						map" . ($id . 'tour') . "_" . $map_id . " = mapBounds.map;\n";
+						$html .= "new tourMap('$id', '$map_id','" . $file_url . "', ". $block['scale-x'] .", map" . ($id . 'tour') . "_" . $map_id . ",'" .  $lang ."', mapBounds.bounds )";
+					}
+					$html .= "</script>";
+					$map_id++; //increment map_id
+					// echo "<h1 style='red'>ulul" .$block['show-elevation'] . "</h1>";
+					// print_r($block);
+					$_SESSION['map_id'] = $map_id; // Save current map id to session 
 		    default: // show unknow blocks
 				$html .= ""; //"<p style='color:#ff00ff;'>" . http_build_query($block) . "</p>";
 		}
+
 	return $html;
 	}
+
+	public function generate_spotmap($block, $block_type, $html, $lang, $id, $custom_map_marker, $map_id) {
+		// $map_id = (isset($_SESSION['map_id']) ? $_SESSION['map_id'] : 1 ); //used to give seperate ids to seperate spotmaps
+		if(array_key_exists("title",$block) && $block['title'] != ""){ $html .=  "<p class='xamoom_title'>" . $block['title'] . "</p>"; }
+		$this_map_id = "xamoom-map-" . $id . "-" . $map_id; //get new map id that is unique on this page
+		//get spot map
+		$cursor = "";
+		$total_num_results = 0;
+		$has_more = true;
+		$spot_map = array('items' => array());
+		while($has_more){
+			$api = $this->encodeURI($this->api_endpoint . "spots?filter[tags]=[\"" . implode("\",\"", $block['spot-map-tags']) . "\"]&page[cursor]=" . $cursor . "&filter[has-location]=true&page[size]=100&lang=" . $lang);
+			$spot_map_response = $this->call_api($api);
+			$resp = json_decode($spot_map_response, true);
+			if ($resp['data']) {
+				$spot_map['items'] = array_merge($spot_map['items'], $resp['data']);
+			}
+			$total_num_results = $resp['meta']['total'];
+			$cursor = $resp['meta']['cursor'];
+			$has_more = $resp['meta']['has-more'];
+		}
+		//render map
+		$html .= "<div class='xamoom-map' id='" . $this_map_id . "'><div class='spotmap-popup'></div><button class=\"expand\"><i class=\"fa fa-expand\"></i></button></div>";
+		$html = $this->generate_map_script($html, $id, $map_id, $this_map_id, $custom_map_marker, $total_num_results, $spot_map);
+		$html .= "<script language='JavaScript'>";
+		if($custom_map_marker){
+			$html .= "var img = new Image();
+				img.onload = function() {
+				map" . $id . "_" . $map_id . "	= renderMap_" . $id . "_" . $map_id . "(this.width,this.height);
+				}
+				img.src = '" . $custom_map_marker . "';";
+		} else { //render without custom marker
+			$html .= " map" . $id . "_" . $map_id . " = renderMap_" . $id . "_" . $map_id . "(this.width,this.height);";
+		}
+		$html .= "</script>";
+
+		$map_id++; //increment map_id
+		$_SESSION['map_id'] = $map_id; // Save current map id to session 
+		return $html;
+		
+	}
+
+	public function generate_map_script($html, $id, $map_id, $this_map_id, $custom_map_marker, $total_num_results, $spot_map) {
+		$html .= "<script language='JavaScript'>  function createNewPopup" . $id . "_" . $map_id . "(spot, marker, map) { \n
+			const self = this;\n
+			marker.addTo(map); \n
+				marker.getElement().addEventListener('click', function(e) {\n
+					document.querySelectorAll('#" . $this_map_id . " .leaflet-marker-icon').forEach((el) => {\n
+						el.style.opacity = 0.5;\n
+					});\n
+					// clicked marker opacity 1 \n
+					marker.getElement().style.opacity = 1;\n
+					\n
+					// center marker with padding\n
+					const latlng = marker.getLatLng();\n
+					const bounds = latlng.toBounds(250); // 250 = meter\n
+					map.panTo(latlng).fitBounds(bounds, {\n
+						paddingBottomRight: [0, 150],\n
+					});\n
+					document.querySelector('#" . $this_map_id . " > .spotmap-popup').innerHTML = self.createInfoWindowPopup(spot);\n
+
+					const calculatedheight = document.querySelector('#" . $this_map_id . " > div.spotmap-popup').offsetHeight - 20 - document.querySelector('#" . $this_map_id . " > div.spotmap-popup > h2').offsetHeight;\n
+					const imagepart = document.querySelector('#" . $this_map_id . " > div.spotmap-popup > div.image-part > *');\n
+					if (imagepart) {\n
+						imagepart.style.height = calculatedheight + 'px';\n
+						imagepart.style.maxHeight = calculatedheight + 'px';\n
+						imagepart.style.width = calculatedheight + 'px';\n
+					}\n
+					const description = document.querySelector('#" . $this_map_id . " > div.spotmap-popup .description');\n 
+					if (description) { \n
+						const btnheight = document.querySelector('#" . $this_map_id . " > div.spotmap-popup > div.spotmap-buttons').offsetHeight; \n
+						description.style.height = calculatedheight - btnheight + 'px';  \n
+					} \n
+					\n
+					// show popup\n
+					self.jQuery('#" . $this_map_id . " > .spotmap-popup').animate({\n
+						bottom: 0,\n
+					}, 300);\n
+					\n
+					e.stopPropagation();\n
+			});\n
+			};\n
+			function hidePopup" . $id . "_" . $map_id . "() { \n
+				this.jQuery('#" . $this_map_id . " > .spotmap-popup').animate({ \n
+				  bottom: '-50%', \n
+				}, 300); \n
+				document.querySelectorAll('#" . $this_map_id . " .leaflet-marker-icon').forEach((el) => { \n
+				  el.style.opacity = 1; \n
+			   }); \n
+			  }; \n
+			function createInfoWindowPopup(spot) {  \n
+			  let imageSection = '';  \n
+			  let spotNameSection = '';  \n
+				  let descriptionSection = '';  \n
+				  let openSection = '';  \n
+				  ({ imageSection, spotNameSection, descriptionSection } = this._generateSections(spot.image_url, spot.display_name, spot.description));  \n
+				  \n
+				  const navLinkSection =  \n
+					`<a class=\"link\" href=\"https://maps.google.com/maps?z=12&t=m&q=\${spot.location.lat},\${spot.location.lon}\">Route</a>`;  \n
+				  \n
+				  const htmlRes = this._concatenateInfoWindowSections(  \n
+					imageSection,  \n
+					spotNameSection,  \n
+					descriptionSection,  \n
+					navLinkSection,  \n
+					openSection,  \n
+				  );  \n
+				  return htmlRes;  \n
+				};  \n
+				  function _generateSections(image, name, description) {  \n
+					  let imageSection = '<div></div>';  \n
+					  let descriptionSection = '<p style=\"height:59%;\" class=\"description\"> </p>';  \n
+					\n
+					  if (image) {  \n
+						imageSection = `<img style=\"width: 114px;height: 114px;max-height: 114px;\" src=\"\${image}\"/>`;  \n
+					  }  \n
+					\n
+					  const spotNameSection = `<h2>\${name}</h2>`;  \n
+					  if (description) {  \n
+						descriptionSection = `<p style=\"height:59%;\" class=\"description\">\${description}</p>`;  \n
+					  }  \n
+					\n
+					  return { imageSection, spotNameSection, descriptionSection };  \n
+				  };  \n
+				   function _concatenateInfoWindowSections(  \n
+					imageSection,  \n
+					spotNameSection,  \n
+					descriptionSection,  \n
+					navLinkSection,  \n
+					openSection,  \n
+				  ) {  \n
+					return `\${spotNameSection}<div class=\"image-part\">\${imageSection}</div>\${descriptionSection}<div class=\"spotmap-buttons\">  \n
+					\${navLinkSection}  \n
+					\${openSection}  \n
+					</div>`;  \n
+				};</script>";
+		//initialize script
+		$html .= "<script language='JavaScript'>\n
+					async function renderMap_" . $id . "_" . $map_id . "(width,height){\n
+						var map = L.map('" . $this_map_id . "', {\n
+									zoomSnap:0.1\n
+								}).setView([0,0], 13);\n
+								// add OpenStreetMap tile layer
+								L.tileLayer('https://api.mapbox.com/styles/v1/xamoom-georg/ck4zb0mei1l371coyi41snaww/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoieGFtb29tLWdlb3JnIiwiYSI6ImNqcGdnY2hvdjAyNXAzdnJoZTUyZzdwYXYifQ.omiMvGIgiAEoRtfQefD9CQ', { attribution: '<a href=\"https://xamoom.com\" target=\"_blank\" title=\"xamoom mobile platform\">xamoom</a>' }).addTo(map);\n
+								const self = this; \n
+									map.on('click', function() { \n
+										self.hidePopup" . $id . "_" . $map_id . "(); \n
+								}); \n
+							
+								var bounds = [];\n";
+
+		//if there is a custom marker, set it up.
+		if($custom_map_marker){
+				$html .= "\nvar factor = 33 / height;";
+				$html .= "\nvar new_height = parseInt(height * factor);";
+				$html .= "\nvar new_width = parseInt(width * factor);";
+			$html .= "\nvar LeafIcon = L.Icon.extend({options: {iconSize:[new_width, new_height],iconAnchor:[new_height / 2, new_height - 1],popupAnchor:  [0, -new_height]}}); ";
+			$html .= "\nvar custom_marker = new LeafIcon({iconUrl: '" . $custom_map_marker ."'});\n";
+		}
+		//render marker script
+		for($j = 0; $j < $total_num_results; $j++){
+			$marker = $spot_map['items'][$j]['attributes'];
+			//kill line breaks from marker descriptions and display_name
+			if(array_key_exists("description",$marker)) {
+				$marker['description'] = str_replace(array("\r", "\n"), "<br>", $marker['description']);
+				$marker['description'] = str_replace(array('"'), '\"', $marker['description']);
+				$marker['description'] = str_replace(array('`'), '\`', $marker['description']);
+				$marker['description'] = str_replace(array("'"), "\'", $marker['description']);
+			} else {
+				$marker['description'] = '';
+			}
+
+			if(array_key_exists("name",$marker)) {
+
+			$marker['name'] = str_replace(array("\r", "\n"), "<br>", $marker['name']);
+			$marker['name'] = str_replace(array('"'), '\"', $marker['name']);
+
+				$marker['name'] = str_replace(array("'"), "\'", $marker['name']);
+				$marker['name'] = str_replace(array("`"), "\`", $marker['name']);
+			}
+			//extract image
+			$image = null;
+			if(array_key_exists("image",$marker)){ $image = $marker['image']; }
+
+			// add a markers
+			if($custom_map_marker){
+					$html .= "\n this.createNewPopup" . $id . "_" . $map_id . "({'image_url': '" . $image . "', 'display_name': '" . $marker['name'] . "', description: '" . $marker['description'] . "', location : { lat : " . $marker['location']['lat'] . ", lon: " . $marker['location']['lon'] . " }}, L.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "],{icon: custom_marker}), map )";
+			} else {
+					$html .= "\n this.createNewPopup" . $id . "_" . $map_id . "({'image_url': '" . $image . "', 'display_name': '" . $marker['name'] . "', description: '" . $marker['description'] . "', location : { lat : " . $marker['location']['lat'] . ", lon: " . $marker['location']['lon'] . " }}, L.marker([" . $marker['location']['lat'] . ", " . $marker['location']['lon'] . "]), map );";
+			}
+
+			$html .= "\nbounds.push([" . $marker['location']['lat'] . "," . $marker['location']['lon'] . "]);\n";
+		}
+	
+		//finalize JavaScript function to render map block
+		$html .= "if (bounds.length > 0) { map.fitBounds(bounds); }\n
+			  //map.zoomOut();\n
+			  map.scrollWheelZoom.disable();\n
+			
+				document.querySelector('#" . $this_map_id . " > .expand').addEventListener('click', function(e) {\n
+				map.flyToBounds(bounds);\n
+				self.hidePopup" . $id . "_" . $map_id . "(); \n
+				e.stopPropagation();\n
+			});\n
+			return {map, bounds};\n
+			};";
+		//start map rendering in JS
+		$html .= "var map" . $id . "_" . $map_id . "	= null;";
+		$html .= "</script>"; //end script
+
+		return $html;
+	}
+
 	/**
 	 * Calls the backend API
 	 *

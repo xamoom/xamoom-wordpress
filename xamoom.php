@@ -36,7 +36,7 @@ along with xamoom-wordpress.  If not, see <http://www.gnu.org/licenses/>.
  * Plugin Name:       xamoom
  * Plugin URI:        http://xamoom.com
  * Description:       This plugin allows you to sync xamoom pages to Wordpress
- * Version:           3.4.0
+ * Version:           3.5.0
  * Author:            xamoom GmbH
  * Author URI:        http://xamoom.com/
  * License:           GPL-2.0+
