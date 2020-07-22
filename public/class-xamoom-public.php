@@ -70,7 +70,27 @@ class xamoom_Public {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/xamoom-public.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . "-FONTAWESOME", plugin_dir_url( __FILE__ ) . 'css/font-awesome.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOME", plugin_dir_url( __FILE__ ) . 'css/all.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMESHIM", plugin_dir_url( __FILE__ ) . 'css/v4-shims.min.css', array(), $this->version, 'all' );
+		// //
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFABRANDSEOT", plugin_dir_url( __FILE__ ) . 'webfonts/fa-brands-400.eot', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFABRANDSSVG", plugin_dir_url( __FILE__ ) . 'webfonts/fa-brands-400.svg', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFABRANDSTTF", plugin_dir_url( __FILE__ ) . 'webfonts/fa-brands-400.ttf', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFABRANDSWOFF", plugin_dir_url( __FILE__ ) . 'webfonts/fa-brands-400.woff', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFABRANDSWOFF2", plugin_dir_url( __FILE__ ) . 'webfonts/fa-brands-400.woff2', array(), $this->version, 'all' );
+		//
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFAREGULAREOT", plugin_dir_url( __FILE__ ) . 'webfonts/fa-regular-400.eot', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFAREGULARSVG", plugin_dir_url( __FILE__ ) . 'webfonts/fa-regular-400.svg', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFAREGULARTTF", plugin_dir_url( __FILE__ ) . 'webfonts/fa-regular-400.ttf', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFAREGULARWOFF", plugin_dir_url( __FILE__ ) . 'webfonts/fa-regular-400.woff', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFAREGULARWOFF2", plugin_dir_url( __FILE__ ) . 'webfonts/fa-regular-400.woff2', array(), $this->version, 'all' );
+		//
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFASOLIDEOT", plugin_dir_url( __FILE__ ) . 'webfonts/fa-solid-900.eot', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFASOLIDSVG", plugin_dir_url( __FILE__ ) . 'webfonts/fa-solid-900.svg', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFASOLIDTTF", plugin_dir_url( __FILE__ ) . 'webfonts/fa-solid-900.ttf', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFASOLIDWOFF", plugin_dir_url( __FILE__ ) . 'webfonts/fa-solid-900.woff', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . "-FONTAWESOMEFONTSFASOLIDWOFF2", plugin_dir_url( __FILE__ ) . 'webfonts/fa-solid-900.woff2', array(), $this->version, 'all' );
+		//
 		wp_enqueue_style( $this->plugin_name . "-LEAFLET", plugins_url('leaflet/leaflet.css', __FILE__), array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . "-OWL", plugins_url('owl-carousel/assets/owl.carousel.min.css', __FILE__), array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name . "-OWL2", plugins_url('owl-carousel/assets/owl.theme.default.min.css', __FILE__), array(), $this->version, 'all' );
@@ -123,7 +143,7 @@ class xamoom_Public {
 		if(array_key_exists('errors', $content) && $content['errors']) {
 			$errCode = $content['errors'][0]['code'];
 			if ($errCode == 92 || $errCode == 93) { // password protected or spot only
-				$html = '<div class="not-available-content"><i class="fa fa-lock"></i><span>This content is password protected<span></div>';
+				$html = '<div class="not-available-content"><i class="fas fa-lock"></i><span>This content is password protected<span></div>';
 				return $html;
 			} else { // any other error
 				return '';
@@ -282,12 +302,12 @@ class xamoom_Public {
 	  </script>";
 		$html .= "<div class=\"time-and-location\">";
 		if(isset($content['data']['attributes']['meta-datetime-from'])) {
-			function clean_param($string){
+			function clean_params($string){
 				  $single_qu_esc = addslashes($string);
 				  return htmlentities($single_qu_esc, ENT_QUOTES);
 			  }
-			$name = clean_param($content['data']['attributes']['display-name']);
-			$excerpt = clean_param($content['data']['attributes']['description']);
+			$name = clean_params($content['data']['attributes']['display-name']);
+			$excerpt = clean_params($content['data']['attributes']['description']);
 			$dateFrom = $content['data']['attributes']['meta-datetime-from'];
 			$dateTo = (isset($content['data']['attributes']['meta-datetime-to']) ? $content['data']['attributes']['meta-datetime-to'] : 'None');
 			$html .= "<a onclick='downloadCalendar(\"". $name ."\", \"". $excerpt ."\", \"". $dateFrom ."\", \"".$dateTo ."\")' class=\"time\"> \n
@@ -303,7 +323,7 @@ class xamoom_Public {
 			
 			$html .="<a target=\"_blank\" href=\"https://maps.google.com/maps?z=12&t=m&q=" . $related_spot['data']['attributes']['location']['lat'] .",". $related_spot['data']['attributes']['location']['lon'] . "\"  class=\"location\"> \n
 			<div> \n
-				<p><i class=\"fa fa-map-marker\"></i>". $related_spot['data']['attributes']['name'] ."</p> \n
+				<p><i class=\"fas fa-map-marker-alt\"></i>". $related_spot['data']['attributes']['name'] ."</p> \n
 			</div>    \n
 		</a> ";
 
@@ -313,7 +333,7 @@ class xamoom_Public {
 			if(isset($content['data']['attributes']['meta-datetime-from'])) {
 			$html .= "<script>
 			moment.locale('" . get_locale() ."'); \n
-			document.querySelector(\"div.time-and-location > a.time > div > p\").innerHTML = `<i class=\"fa fa-clock-o\"></i>\${moment('". $content['data']['attributes']['meta-datetime-from'] ."').format('dd., DD. MMM, LT')}";
+			document.querySelector(\"div.time-and-location > a.time > div > p\").innerHTML = `<i class=\"far fa-clock\"></i>\${moment('". $content['data']['attributes']['meta-datetime-from'] ."').format('dd., DD. MMM, LT')}";
 			if(isset($content['data']['attributes']['meta-datetime-to'])) {
 					$html .= "&ndash; \${moment('" . $content['data']['attributes']['meta-datetime-to'] . "').format('dd., DD. MMM, LT')}";
 				}
@@ -637,7 +657,7 @@ class xamoom_Public {
 					$has_more = $resp['meta']['has-more'];
 				}
 				//render map
-				$html .= "<div class='xamoom-map' id='" . $this_map_id . "'><div class='spotmap-popup'></div><button class='expand'><i class='fa fa-expand'></i></button><button class='expand info'><i class='fa fa-info'></i></button>
+				$html .= "<div class='xamoom-map' id='" . $this_map_id . "'><div class='spotmap-popup'></div><button class='expand'><i class='fas fa-expand'></i></button><button class='expand info'><i class='fa fa-info'></i></button>
 				<div class='unitSwitch-wrap cf'>
                 
 				<div class='unitSwitch'>
@@ -693,14 +713,14 @@ class xamoom_Public {
 					if($custom_map_marker){
 						$html .= "var img = new Image();
 							img.onload = async function() {
-							const mapBounds = await renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
+							const mapBounds = renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
 							map" . ($id . 'tour') . "_" . $map_id . " = mapBounds.map;\n
 							new tourMap('$id', '$map_id', '" . $file_url . "', ". $block['scale-x'] .", map" . ($id . 'tour') . "_" . $map_id . ",'" .  $lang ."', mapBounds.bounds  );
 							}
 							img.src = '" . $custom_map_marker . "';
 							";
 					} else { //render without custom marker
-						$html .= "const mapBounds = await renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
+						$html .= "const mapBounds = renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
 						map" . ($id . 'tour') . "_" . $map_id . " = mapBounds.map;\n";
 						$html .= "new tourMap('$id', '$map_id','" . $file_url . "', ". $block['scale-x'] .", map" . ($id . 'tour') . "_" . $map_id . ",'" .  $lang ."', mapBounds.bounds )";
 					}
@@ -737,7 +757,7 @@ class xamoom_Public {
 			$has_more = $resp['meta']['has-more'];
 		}
 		//render map
-		$html .= "<div class='xamoom-map' id='" . $this_map_id . "'><div class='spotmap-popup'></div><button class=\"expand\"><i class=\"fa fa-expand\"></i></button></div>";
+		$html .= "<div class='xamoom-map' id='" . $this_map_id . "'><div class='spotmap-popup'></div><button class=\"expand\"><i class=\"fas fa-expand\"></i></button></div>";
 		$html = $this->generate_map_script($html, $id, $map_id, $this_map_id, $custom_map_marker, $total_num_results, $spot_map);
 		$html .= "<script language='JavaScript'>";
 		if($custom_map_marker){
@@ -853,7 +873,7 @@ class xamoom_Public {
 				};</script>";
 		//initialize script
 		$html .= "<script language='JavaScript'>\n
-					async function renderMap_" . $id . "_" . $map_id . "(width,height){\n
+					function renderMap_" . $id . "_" . $map_id . "(width,height){\n
 						var map = L.map('" . $this_map_id . "', {\n
 									zoomSnap:0.1\n
 								}).setView([0,0], 13);\n

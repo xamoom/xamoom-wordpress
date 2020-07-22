@@ -156,8 +156,8 @@ class tourMap {
 		const geojsonlayer = L.geoJSON(geoJSONData);
 		geojsonlayer.addTo(map);
 		// set(this, 'ogBounds', geojsonlayer.getBounds());
-		const bounds = geojsonlayer.getBounds().pad(((100 - scaleX) / 100));
-		map.fitBounds(bounds);
+		const bounds = geojsonlayer.getBounds();
+		map.fitBounds(bounds.extend(this.bounds).pad(((100 - scaleX) / 100)));
 		this.bounds = bounds;
 		this._generateTourData(geojson);
 	};
@@ -392,9 +392,15 @@ class tourMap {
 		html.querySelector("span").innerHTML = tourData.name;
 		html.querySelector("div > div > div:nth-child(2) > div:nth-child(1) > span:nth-child(2)").innerHTML = tourData.gain;
 		html.querySelector("div > div > div:nth-child(2) > div:nth-child(2) > span:nth-child(2)").innerHTML = tourData.loss;
-		const hour = time.toString().split('.')[0];
-		const minutes = Math.floor(((time - parseInt(hour)) * 60));
+		let hour = time.toString().split('.')[0];
+		let minutes = Math.floor(((time - parseInt(hour)) * 60));
 
+		if (parseInt(hour, 10) < 10) {
+			hour = "0" + hour;
+		}
+		if (parseInt(minutes, 10) < 10) {
+			minutes = "0" + minutes;
+		}
 		html.querySelector("div > div > div:nth-child(3) > div.tour-stats.tour-stats-time.tour-stats-big > strong").innerHTML = `${hour}:${minutes}`;
 		html.querySelector("div > div > div:nth-child(1) > div.tour-stats.tour-stats-big.tour-stats-length > span.tour-stats-unit").innerText = lengthUnit;
 		html.querySelector("div > div > div:nth-child(2) > div:nth-child(1) > span.tour-stats-unit").innerText = heightUnit;
