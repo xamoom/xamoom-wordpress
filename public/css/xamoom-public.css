@@ -538,3 +538,7 @@ a.location:hover, a.location:active, a.time:hover, a.time:active {
           bottom: 25px;
         }
       }
+  
+.elevation-chart {
+  margin-top: 10px;
+}

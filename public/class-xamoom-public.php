@@ -705,8 +705,8 @@ class xamoom_Public {
 					</div>";
 					if ($block['show-elevation']) {
 
-						$html .= "<canvas id='elevationChart". $id . "tour-" . $map_id ."-metric' width='400' height='100' style='display: none;''></canvas>
-						<canvas id='elevationChart". $id . "tour-" . $map_id ."-imperial' width='400' height='100'  style='display: none;'></canvas>";
+						$html .= "<canvas class='elevation-chart' id='elevationChart". $id . "tour-" . $map_id ."-metric' width='400' height='100' style='display: none;''></canvas>
+						<canvas class='elevation-chart' id='elevationChart". $id . "tour-" . $map_id ."-imperial' width='400' height='100'  style='display: none;'></canvas>";
 					}
 					$html = $this->generate_map_script($html, ($id . 'tour'), $map_id, $this_map_id, $custom_map_marker, $total_num_results, $spot_map);
 					$html .= "<script language='JavaScript'>";
