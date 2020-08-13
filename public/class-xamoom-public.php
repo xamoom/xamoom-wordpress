@@ -566,10 +566,10 @@ class xamoom_Public {
 				if($download_type == "2") { // GPX
 					$html .= '<div class="button-icon gpx-icon"></div> ';			
 				} else {
-					$html = "<i class='fa " . $icon . "'></i>";
+					$html .= "<i class='fa " . $icon . "'></i>";
 				}
 				
-				$html = "<a href='" . $download_url . "'>" . $download_title . "</a></p>";
+				$html .= "<a href='" . $download_url . "'>" . $download_title . "</a></p>";
 				if(array_key_exists("text",$block)){ $html.=  "<p class='xamoom_smalltext'>" . $block['text'] . "</p>"; }
 			break;
 
