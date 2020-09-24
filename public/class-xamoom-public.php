@@ -731,14 +731,14 @@ class xamoom_Public {
 					if($custom_map_marker){
 						$html .= "var img = new Image();
 							img.onload = async function() {
-							const mapBounds = renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
+							var mapBounds = renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
 							map" . ($id . 'tour') . "_" . $map_id . " = mapBounds.map;\n
 							new tourMap('$id', '$map_id', '" . $file_url . "', ". $block['scale-x'] .", map" . ($id . 'tour') . "_" . $map_id . ",'" .  $lang ."', mapBounds.bounds  );
 							}
 							img.src = '" . $custom_map_marker . "';
 							";
 					} else { //render without custom marker
-						$html .= "const mapBounds = renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
+						$html .= "var mapBounds = renderMap_" . ($id . 'tour') . "_" . $map_id . "(this.width,this.height);\n
 						map" . ($id . 'tour') . "_" . $map_id . " = mapBounds.map;\n";
 						$html .= "new tourMap('$id', '$map_id','" . $file_url . "', ". $block['scale-x'] .", map" . ($id . 'tour') . "_" . $map_id . ",'" .  $lang ."', mapBounds.bounds )";
 					}
