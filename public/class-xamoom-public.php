@@ -476,17 +476,35 @@ class xamoom_Public {
 				case "10": //GOOGLE+
 						$icon = "fa-google-plus";
 						break;
-					case "11": //TEL
+				case "11": //TEL
 						$icon = "fa-phone";
 						break;
-					case "12": //EMAIL
+				case "12": //EMAIL
 						$icon = "fa-envelope-o";
 						break;
-					case "13": //SPOTIFY
+				case "13": //SPOTIFY
 						$icon = "fa-spotify";
 						break;
-					case "14": //GOOGLE_MAPS
+				case "14": //GOOGLE_MAPS
 						$icon = "fa-location-arrow";
+						break;
+				case "15": //APP STORE
+						$icon = "fa fa-apple";
+						break;
+				case "16": //GOOGLE PLAY
+						$icon = "fab fa-google-play";
+						break;
+				case "17": //WINDOWS STORE
+						$icon = "fa fa-windows";
+						break;
+				case "18": //INSTAGRAM
+						$icon = "fa fa-instagram";
+						break;
+				case "19": //SMS
+						$icon = "fas fa-sms";
+						break;
+				case "20": //WHATSAPP
+						$icon = "fab fa-whatsapp";
 						break;
 				}
 
