@@ -182,14 +182,18 @@ class xamoom_Public {
 		//add custom css
 		$html = "<style type='text/css'>" . get_option('xamoom_custom_css') . "</style>";
 		
-
 		//render block HTML for each content block
 		for($i = 0; $i < count($content_blocks); $i++){
 			$block = $content_blocks[$i]['attributes'];
 			$block_type = $block['block-type']; //get block type
+			$is_public = $block['is-public'];
 
-			$html .= "<div class='xamoom_block'>"; //initializes content block div container
-
+			if (!$is_public && !wp_is_mobile()) {
+				continue;
+			}
+		
+			//initializes content block div container
+			$html .= "<div class='xamoom_block'>";
 
 			$html = $this->generate_blocks_html($block, $block_type, $html, $lang, $id, $custom_map_marker);
 		$html .= "</div>"; //finalize content block div
@@ -972,8 +976,8 @@ class xamoom_Public {
 	 * @since    1.0.0
 	 */
 	public function call_api($url){
-		$header = array('headers' => array( 'ApiKey' => get_option('xamoom_api_key'), 'X-Reason' => 2, 'user-agent' => 'xamoom wordpress plugin' ));
-		$result = wp_remote_get( $url ,	array('headers' => array( 'ApiKey' => get_option('xamoom_api_key'), 'X-Reason' => 2, 'user-agent' => 'xamoom wordpress plugin' ) ));
+		$header = array('headers' => array( 'ApiKey' => get_option('xamoom_api_key'), 'X-Reason' => 0, 'user-agent' => 'xamoom wordpress plugin' ));
+		$result = wp_remote_get( $url ,	array('headers' => array( 'ApiKey' => get_option('xamoom_api_key'), 'X-Reason' => 0, 'user-agent' => 'xamoom wordpress plugin' ) ));
 		return wp_remote_retrieve_body($result);
 	}
 
