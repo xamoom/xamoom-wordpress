@@ -68,7 +68,7 @@ class xamoom {
 	public function __construct() {
 
 		$this->plugin_name = 'xamoom';
-		$this->version = '3.5.0';
+		$this->version = '3.6.0';
 		$this->api_endpoint = 'https://api.xamoom.net/consumer/';
 		// $this->api_endpoint = 'https://xamoom-dev.appspot.com/consumer/'; // DEV
 		$this->load_dependencies();
